@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Presentation", "PharmaHub.Presentation\PharmaHub.Presentation.csproj", "{034B192D-EE41-48BF-96C2-8D3F74E4C93A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Service", "PharmaHub.Service\PharmaHub.Service.csproj", "{967B4A42-B177-4416-8B97-DFC9DCE553DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Business", "PharmaHub.Business\PharmaHub.Business.csproj", "{C2337D4D-B22F-41C0-AC34-15FD7875DDE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.DAL", "PharmaHub.DAL\PharmaHub.DAL.csproj", "{4E435CF6-31C3-46FA-8D23-5A0190CAFA09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.DTOs", "PharmaHub.DTOs\PharmaHub.DTOs.csproj", "{DB62C0A5-52BC-460B-A326-2BF6E59E9B17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Domain", "PharmaHub.Domain\PharmaHub.Domain.csproj", "{4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{034B192D-EE41-48BF-96C2-8D3F74E4C93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{034B192D-EE41-48BF-96C2-8D3F74E4C93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{034B192D-EE41-48BF-96C2-8D3F74E4C93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{034B192D-EE41-48BF-96C2-8D3F74E4C93A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{967B4A42-B177-4416-8B97-DFC9DCE553DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{967B4A42-B177-4416-8B97-DFC9DCE553DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967B4A42-B177-4416-8B97-DFC9DCE553DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{967B4A42-B177-4416-8B97-DFC9DCE553DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2337D4D-B22F-41C0-AC34-15FD7875DDE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2337D4D-B22F-41C0-AC34-15FD7875DDE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2337D4D-B22F-41C0-AC34-15FD7875DDE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2337D4D-B22F-41C0-AC34-15FD7875DDE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E435CF6-31C3-46FA-8D23-5A0190CAFA09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E435CF6-31C3-46FA-8D23-5A0190CAFA09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E435CF6-31C3-46FA-8D23-5A0190CAFA09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E435CF6-31C3-46FA-8D23-5A0190CAFA09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB62C0A5-52BC-460B-A326-2BF6E59E9B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB62C0A5-52BC-460B-A326-2BF6E59E9B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB62C0A5-52BC-460B-A326-2BF6E59E9B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB62C0A5-52BC-460B-A326-2BF6E59E9B17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF842E7F-2931-4DAE-B306-4D6077EE0BC0}
+	EndGlobalSection
+EndGlobal

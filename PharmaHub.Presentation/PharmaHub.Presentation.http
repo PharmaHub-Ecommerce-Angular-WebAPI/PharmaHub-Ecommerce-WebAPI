@@ -1,0 +1,6 @@
+@PharmaHub.Presentation_HostAddress = http://localhost:5092
+
+GET {{PharmaHub.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
