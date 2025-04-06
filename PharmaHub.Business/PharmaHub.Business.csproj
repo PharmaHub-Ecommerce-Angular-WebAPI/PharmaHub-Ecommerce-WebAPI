@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PharmaHub.DAL\PharmaHub.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
