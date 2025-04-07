@@ -17,14 +17,13 @@ namespace PharmaHub.Domain.Entities
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.01")]
         public decimal Price { get; set; }
 
         [Range(0, short.MaxValue, ErrorMessage = "Quantity must be zero or more.")]
-        public short Quantity { get; set; } = default;
+        public short Quantity { get; set; } 
 
         [Url(ErrorMessage = "Image URL must be a valid URL.")]
-        public string ImageUrl { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } 
         public ProductCategory Category { get; set; }
 
         [Range(0, 100, ErrorMessage = "Discount rate must be between 0 and 100.")]
