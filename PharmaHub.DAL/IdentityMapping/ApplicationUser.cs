@@ -37,6 +37,9 @@ namespace PharmaHub.DAL.IdentityMapping
         public string FormalPapersURL { get; set; }
         [Url]
         public string LogoURL { get; set; }
+
+
+        public bool IsApproved { get; set; } = true; // Default to true, for Customer accounts 
         #endregion
     }
 }
