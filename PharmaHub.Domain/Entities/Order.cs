@@ -12,7 +12,7 @@ namespace PharmaHub.Domain.Entities
 {
     public class Order
     {
-        public Guid ID { get; set; } = Guid.NewGuid();
+       public Guid ID { get; set; } = Guid.NewGuid();
        public DateTime OrderDate { get; set; } = DateTime.Now;
 
        [Required]

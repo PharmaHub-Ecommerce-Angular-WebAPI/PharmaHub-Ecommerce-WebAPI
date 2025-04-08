@@ -8,13 +8,15 @@ namespace PharmaHub.Domain.Entities
 {
     public class PackagesComponent
     {
-        public Guid ProductId { get; set; }
+        //will have composite key from Product id (forgien key) and ProductName
+
+        public Guid PackageId { get; set; }
         public Product Product { get; set; }
 
-        public Guid PackageId { get; set; } = Guid.NewGuid();
 
-       // public string PackageName { get; set; }
+        public string ComponentName { get; set; }
 
+        //public Guid PackageId { get; set; } = Guid.NewGuid();
 
     }
 }

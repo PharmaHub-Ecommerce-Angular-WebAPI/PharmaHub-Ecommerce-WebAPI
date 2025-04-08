@@ -36,7 +36,7 @@ namespace PharmaHub.DAL.Configuration
 
 
             builder.Property(p => p.Quantity)
-                .IsRequired(false) // Allow null for infinite stock
+                .IsRequired(false)     // Allow null for infinite stock
                 .HasDefaultValue(null); // Null-able to allow for Infinite stock
 
 
