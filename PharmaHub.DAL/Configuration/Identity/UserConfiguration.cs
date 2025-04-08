@@ -27,6 +27,9 @@ namespace PharmaHub.DAL.Configuration.Identity
             builder.Property(u => u.Address)
                 .HasMaxLength(300); // Set a maximum length for the address field
 
+            builder.Property(u=>u.TrustScore)
+                .HasColumnType("TINYINT") 
+                .HasDefaultValue(100); // Each account Stats will have a max trust score of 100
 
         }
 

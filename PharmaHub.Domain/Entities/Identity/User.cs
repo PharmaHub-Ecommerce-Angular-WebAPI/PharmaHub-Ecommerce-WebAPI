@@ -19,5 +19,6 @@ namespace PharmaHub.Domain.Entities.Identity
 
         public AccountStats AccountStat { get; set; }
 
+        public byte TrustScore { get; set; } // For reporting system (under 50 suspicious in 0 Banned)
     }
 }
