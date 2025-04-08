@@ -13,6 +13,8 @@ namespace PharmaHub.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
+            builder.ToTable("Products"); 
+
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id)
                 .HasColumnName("ProductId"); // Rename Id to ProductId in the database

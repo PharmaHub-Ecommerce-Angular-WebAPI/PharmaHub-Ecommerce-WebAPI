@@ -13,6 +13,8 @@ namespace PharmaHub.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<SuggestedMedicine> builder)
         {
+            builder.ToTable("SuggestedMedicines");
+
             builder.HasKey(sm => sm.Id);
             builder.Property(sm => sm.Name)
                 .IsRequired()

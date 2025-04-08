@@ -13,6 +13,8 @@ namespace PharmaHub.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<PackagesComponent> builder)
         {
+            builder.ToTable("PackagesComponents"); 
+
             builder.HasKey(pc => new { pc.PackageId, pc.ComponentName });
 
             builder.Property(pc => pc.ComponentName)

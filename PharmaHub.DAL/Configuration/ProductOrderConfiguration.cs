@@ -13,6 +13,8 @@ namespace PharmaHub.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<ProductOrder> builder)
         {
+            builder.ToTable("ProductOrders"); 
+
             builder.HasKey(po => new { po.ProductId, po.OrderId });
             builder.Property(po => po.Amount)
                 .IsRequired()

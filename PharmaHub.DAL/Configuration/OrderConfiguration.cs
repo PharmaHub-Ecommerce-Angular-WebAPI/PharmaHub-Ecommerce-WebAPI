@@ -13,6 +13,8 @@ namespace PharmaHub.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
+            builder.ToTable("Orders");
+
             builder.HasKey(o => o.ID);
             builder.Property(o => o.ID)
                 .HasColumnName("OrderID");
