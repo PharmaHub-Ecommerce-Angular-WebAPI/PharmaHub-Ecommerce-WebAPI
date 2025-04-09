@@ -16,6 +16,7 @@ namespace PharmaHub.DAL.Configuration
             builder.ToTable("SuggestedMedicines");
 
             builder.HasKey(sm => sm.Id);
+
             builder.Property(sm => sm.Name)
                 .IsRequired()
                 .HasMaxLength(150)

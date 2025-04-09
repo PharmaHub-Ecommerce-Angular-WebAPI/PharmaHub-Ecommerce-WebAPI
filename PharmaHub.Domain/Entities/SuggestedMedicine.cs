@@ -11,7 +11,7 @@ namespace PharmaHub.Domain.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [MaxLength(150, ErrorMessage = "Product name cannot exceed 100 characters.")]
+        [MaxLength(150, ErrorMessage = "Product name cannot exceed 150 characters.")]
         public string Name { get; set; } = string.Empty;
 
         [Range(0, short.MaxValue, ErrorMessage = "Strength must be zero or more.")]

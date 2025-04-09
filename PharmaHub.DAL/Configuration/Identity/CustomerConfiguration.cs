@@ -15,6 +15,18 @@ namespace PharmaHub.DAL.Configuration.Identity
         {
             builder.ToTable("Customers");
 
+            // Configure relationships
+
+            builder.HasMany(c => c.FavoriteProductsList)
+                .WithOne(fp => fp.Customer)
+                .HasForeignKey(fp => fp.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(c => c.Orders)
+                .WithOne(o => o.Customer)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
         }
     }
 }

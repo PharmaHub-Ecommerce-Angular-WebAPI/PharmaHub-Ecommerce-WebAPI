@@ -41,6 +41,14 @@ namespace PharmaHub.DAL.Configuration.Identity
             builder.Property(p => p.LogoURL)
                 .IsRequired()
                 .HasDefaultValue("https://i.pinimg.com/736x/ce/f1/2d/cef12d52c6ceb1076c1812b4560c05d1.jpg");
+
+            // Configure relationships
+            builder.HasMany(p => p.productsList)
+                .WithOne(p => p.Pharmacy)
+                .HasForeignKey(p => p.PharmacyId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+
         }
     }
 }

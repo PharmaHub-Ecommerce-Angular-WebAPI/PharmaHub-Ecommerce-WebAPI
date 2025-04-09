@@ -63,6 +63,34 @@ namespace PharmaHub.DAL.Configuration
             builder.Property(p => p.Category)
                 .IsRequired()
                 .HasConversion<string>(); // ProductCategory is an enum, convert it to string for storage
+
+
+            ///////// Configure relationships
+            builder.HasMany(po => po.ProductOrdersList)
+                .WithOne(o => o.Product)
+                .HasForeignKey(po => po.ProductId)
+                .HasConstraintName("FK_ProductOrder_ProductId")
+                .OnDelete(DeleteBehavior.Cascade); // Cascade delete for ProductOrders when Product is deleted
+
+
+            builder.HasMany(p=>p.FavoriteProductsList)
+                .WithOne(fp=>fp.Product)
+                .HasForeignKey(fp => fp.ProductId)
+                .HasConstraintName("FK_FavoriteProduct_ProductId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(p => p.Pharmacy)
+                .WithMany(ph => ph.productsList)
+                .HasForeignKey(p => p.PharmacyId)
+                .HasConstraintName("FK_Product_PharmacyId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            builder.HasMany(p => p.PackagesComponents)
+                .WithOne(pc => pc.Product)
+                .HasForeignKey(pc => pc.ProductId)
+                .HasConstraintName("FK_PackagesComponent_ProductId")
+                .OnDelete(DeleteBehavior.Cascade); 
         }
     }
 }

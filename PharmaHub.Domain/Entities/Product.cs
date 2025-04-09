@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 
 namespace PharmaHub.Domain.Entities
@@ -32,6 +33,12 @@ namespace PharmaHub.Domain.Entities
         [Range(0, short.MaxValue, ErrorMessage = "Strength must be zero or more.")]
         public short Strength { get; set; } = default;
 
+        // Relationships
+        public ICollection<ProductOrder> ProductOrdersList { get; set; } = new List<ProductOrder>();
+        public ICollection<FavoriteProduct> FavoriteProductsList { get; set; } = new List<FavoriteProduct>();
+        public ICollection<PackagesComponent> PackagesComponents { get; set; } = new List<PackagesComponent>();
+        public Guid PharmacyId { get; set; } 
+        public Pharmacy Pharmacy { get; set; } 
 
     }
 }

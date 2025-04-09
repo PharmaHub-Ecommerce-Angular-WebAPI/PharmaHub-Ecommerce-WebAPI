@@ -11,6 +11,8 @@ namespace PharmaHub.Domain.Entities.Identity
         //The Full Name Will put in the UserName in the IdentityUser 
 
 
-
+        //relation
+        public ICollection<FavoriteProduct> FavoriteProductsList { get; set; } = new List<FavoriteProduct>();
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

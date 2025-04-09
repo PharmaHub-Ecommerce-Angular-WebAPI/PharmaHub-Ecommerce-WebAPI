@@ -30,5 +30,7 @@ namespace PharmaHub.Domain.Entities.Identity
 
        public string LogoURL { get; set; }
 
+       public ICollection<Product> productsList { get; set; } = new List<Product>();
+
     }
 }

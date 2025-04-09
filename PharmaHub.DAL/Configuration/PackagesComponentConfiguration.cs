@@ -15,14 +15,19 @@ namespace PharmaHub.DAL.Configuration
         {
             builder.ToTable("PackagesComponents"); 
 
-            builder.HasKey(pc => new { pc.PackageId, pc.ComponentName });
+            builder.HasKey(pc => new { pc.ProductId, pc.ComponentName });
 
             builder.Property(pc => pc.ComponentName)
                 .IsRequired()
                 .HasMaxLength(50);
 
+            builder.HasOne(pc => pc.Product)
+                .WithMany(p => p.PackagesComponents)
+                .HasForeignKey(pc => pc.ProductId)
+                .OnDelete(DeleteBehavior.Cascade); 
 
-           
+
+
         }
     }
 

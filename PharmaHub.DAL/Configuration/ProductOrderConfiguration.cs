@@ -20,6 +20,18 @@ namespace PharmaHub.DAL.Configuration
                 .IsRequired()
                 .HasDefaultValue(1); // Default value for Amount
 
+
+            // Configure relationships
+            builder.HasOne(builder => builder.Product)
+                .WithMany(product => product.ProductOrdersList)
+                .HasForeignKey(po => po.ProductId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            builder.HasOne(builder => builder.Order)
+                .WithMany(order => order.ProductOrdersList)
+                .HasForeignKey(po => po.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
 
     }

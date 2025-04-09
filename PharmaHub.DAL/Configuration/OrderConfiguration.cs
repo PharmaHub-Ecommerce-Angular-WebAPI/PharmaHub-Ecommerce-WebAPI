@@ -21,13 +21,23 @@ namespace PharmaHub.DAL.Configuration
 
 
             builder.HasIndex(o => o.OrderDate)
-                .HasDatabaseName("IX_Order_Date"); // Index on OrderDate
+                .HasDatabaseName("IX_Order_Date"); 
 
 
             builder.Property(o => o.PaymentMethod)
                 .IsRequired()
-                .HasConversion<string>(); // Store as string in the database
+                .HasConversion<string>();
 
+            // Configure relationships
+            builder.HasMany(o => o.ProductOrdersList)
+                .WithOne(po => po.Order)
+                .HasForeignKey(po => po.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(o => o.Customer)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade); 
         }
     }
 }
