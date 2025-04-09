@@ -21,7 +21,11 @@ namespace PharmaHub.DAL.Context
         public DbSet<ProductOrder> ProductOrders { get; set; }
         public DbSet<PackagesComponent> PackagesComponents { get; set; }
         public DbSet<SuggestedMedicine> SuggestedMedicines { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; } ////////////////// Is it accurate ?/////////////
+        public DbSet<Pharmacy> Pharmacies { get; set; }
+        public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
+
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
