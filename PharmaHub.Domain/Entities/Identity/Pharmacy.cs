@@ -4,21 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using PharmaHub.Domain.Entities.Identity.Contract;
 using PharmaHub.Domain.Enums;
 
-namespace PharmaHub.DAL.IdentityMapping
+namespace PharmaHub.Domain.Entities.Identity
 {
-    public class ApplicationUser: IdentityUser,IUser
+    public class Pharmacy : User
     {
 
-
-        #region Owner
         [Required] public string PharmacyName { get; set; } // Will use Default Identity UserName for customer Full name. 
-        [Required] public string LocationDescription { get; set; }
 
-        public bool AllowCreditCard { get; set; }// If the pharmacy accept credit card (true) or not 
+        public bool AllowCreditCard { get; set; } // If the pharmacy accept credit card (true) or not.
         public string CreditCardNumber { get; set; }
 
 
@@ -30,13 +25,12 @@ namespace PharmaHub.DAL.IdentityMapping
         public byte CloseTime { get; set; } = 0;  //If 0 then 24/7
 
 
-        public CountriesSupported Country { get; set; } = CountriesSupported.Egypt; // Default to Egypt
-        public Governorates city { get; set; }
-
 
         public string FormalPapersURL { get; set; }
-        [Url]
-        public string LogoURL { get; set; }
-        #endregion
+
+       public string LogoURL { get; set; }
+
+       public ICollection<Product> productsList { get; set; } = new List<Product>();
+
     }
 }

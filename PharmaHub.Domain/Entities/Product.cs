@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 
 namespace PharmaHub.Domain.Entities
@@ -17,14 +18,13 @@ namespace PharmaHub.Domain.Entities
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.01")]
         public decimal Price { get; set; }
 
         [Range(0, short.MaxValue, ErrorMessage = "Quantity must be zero or more.")]
-        public short Quantity { get; set; } = default;
+        public short Quantity { get; set; } 
 
         [Url(ErrorMessage = "Image URL must be a valid URL.")]
-        public string ImageUrl { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } 
         public ProductCategory Category { get; set; }
 
         [Range(0, 100, ErrorMessage = "Discount rate must be between 0 and 100.")]
@@ -33,6 +33,12 @@ namespace PharmaHub.Domain.Entities
         [Range(0, short.MaxValue, ErrorMessage = "Strength must be zero or more.")]
         public short Strength { get; set; } = default;
 
+        // Relationships
+        public ICollection<ProductOrder> ProductOrdersList { get; set; } = new List<ProductOrder>();
+        public ICollection<FavoriteProduct> FavoriteProductsList { get; set; } = new List<FavoriteProduct>();
+        public ICollection<PackagesComponent> PackagesComponents { get; set; } = new List<PackagesComponent>();
+        public Guid PharmacyId { get; set; } 
+        public Pharmacy Pharmacy { get; set; } 
 
     }
 }
