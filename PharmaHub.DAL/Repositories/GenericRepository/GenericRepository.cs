@@ -52,7 +52,7 @@ public class GenericRepository<T> : IGenericRepository<T>
         return entity;
     }
 
-    public async Task<bool> UpsertAsync(T entity)
+    public async Task UpsertAsync(T entity)
     {
         var entry = _context.Entry(entity);
 
@@ -73,7 +73,7 @@ public class GenericRepository<T> : IGenericRepository<T>
         if (keyValue == null || keyValue.Equals(GetDefault(keyProperty.ClrType)))
         {
             await _dbSet.AddAsync(entity); // Insert
-            return true;
+            
         }
         else
         {
@@ -81,12 +81,12 @@ public class GenericRepository<T> : IGenericRepository<T>
             if (existingEntity == null)
             {
                 await _dbSet.AddAsync(entity); // Insert
-                return true;
+               
             }
             else
             {
                 _context.Entry(existingEntity).CurrentValues.SetValues(entity); // Update
-                return false;
+                
             }
         }
     }
