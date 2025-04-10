@@ -7,6 +7,6 @@ public interface IGenericRepository <T> where T : class
     Task<T?> GetIdAsync(Guid id);
     Task<IReadOnlyList<T>> GetAllAsync();
     Task<T> UpdatedAsync(T entity);
-    Task<bool> UpsertAsync(T entity);
+    Task UpsertAsync(T entity);
     Task SavaChange();
 }
