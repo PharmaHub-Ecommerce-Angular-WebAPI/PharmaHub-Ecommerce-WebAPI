@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PharmaHub.Domain.Entities
 {
@@ -12,10 +7,10 @@ namespace PharmaHub.Domain.Entities
         //will have composite key from Product id (forgien key) and ProductName
 
         [Required] public Guid ProductId { get; set; }
-       public Product Product { get; set; }
+        public Product Product { get; set; }
         public string ComponentName { get; set; }
 
-        
+
 
     }
 }
