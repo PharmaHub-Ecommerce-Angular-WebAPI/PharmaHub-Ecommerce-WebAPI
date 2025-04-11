@@ -67,4 +67,12 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
             .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
             .ToListAsync();
     }
+
+
+    //Get Number of Products pages
+    public async Task<int> GetNumberOfProductsPagesAsync(int pageSize)
+    {
+        var totalProducts = await _dbSet.CountAsync();
+        return (int)Math.Ceiling((double)totalProducts / pageSize);
+    }
 }
