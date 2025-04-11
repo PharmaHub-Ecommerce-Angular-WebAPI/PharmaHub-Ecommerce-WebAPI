@@ -18,7 +18,7 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         return await _dbSet
             .AsNoTracking()
-            .OrderByDescending(p => p.Id) 
+            .OrderByDescending(p => p.CreatedAt) 
             .Skip((page - 1) * size)
             .Take(size)
             .ToListAsync();

@@ -33,6 +33,8 @@ namespace PharmaHub.Domain.Entities
         [Range(0, short.MaxValue, ErrorMessage = "Strength must be zero or more.")]
         public short Strength { get; set; } = default;
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         // Relationships
         public ICollection<ProductOrder> ProductOrdersList { get; set; } = new List<ProductOrder>();
         public ICollection<FavoriteProduct> FavoriteProductsList { get; set; } = new List<FavoriteProduct>();
