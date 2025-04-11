@@ -9,9 +9,7 @@ namespace PharmaHub.DAL.Repositories.ProductRepository;
 
 public class ProductRepository : GenericRepository<Product>, IProductRepository
 {
-    public ProductRepository(ApplicationDbContext context) : base(context)
-    {
-    }
+    public ProductRepository(ApplicationDbContext context) : base(context) { }
 
     // View products paginated and ordered by latest
     public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size)

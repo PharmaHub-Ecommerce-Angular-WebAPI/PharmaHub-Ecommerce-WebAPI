@@ -37,7 +37,13 @@ namespace PharmaHub.DAL.Configuration
             builder.HasOne(o => o.Customer)
                 .WithMany(c => c.Orders)
                 .HasForeignKey(o => o.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // convert enum to string in data base 
+            builder.Property(p => p.OrderStatus)
+               .HasConversion<string>();
+
+           
         }
     }
 }
