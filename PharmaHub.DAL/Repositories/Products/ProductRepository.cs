@@ -5,7 +5,7 @@ using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Domain.Infrastructure;
 
-namespace PharmaHub.DAL.Repositories.ProductRepository;
+namespace PharmaHub.DAL.Repositories;
 
 public class ProductRepository : GenericRepository<Product>, IProductRepository
 {
