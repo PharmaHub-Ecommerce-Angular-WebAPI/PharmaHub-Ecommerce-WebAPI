@@ -10,6 +10,11 @@ namespace PharmaHub.DAL.Configuration
         {
 
             builder.ToTable("FavoriteProducts");
+
+            builder.Property(fp => fp.CustomerId)
+                .IsRequired()
+                .HasMaxLength(130);
+
             // Configure primary key
             builder.HasKey(fp => new { fp.CustomerId, fp.ProductId });
 
@@ -18,7 +23,7 @@ namespace PharmaHub.DAL.Configuration
             builder.HasOne(fp => fp.Customer)
                 .WithMany(c => c.FavoriteProductsList)
                 .HasForeignKey(fp => fp.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(fp => fp.Product)
                 .WithMany(p => p.FavoriteProductsList)

@@ -14,13 +14,16 @@ namespace PharmaHub.DAL.Configuration.Identity
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
             builder.ToTable("Customers");
+            builder.Property(c=>c.Id)
+                .IsRequired()
+                .HasMaxLength(130);
 
             // Configure relationships
 
-            builder.HasMany(c => c.FavoriteProductsList)
-                .WithOne(fp => fp.Customer)
-                .HasForeignKey(fp => fp.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.HasMany(c => c.FavoriteProductsList)
+            //    .WithOne(fp => fp.Customer)
+            //    .HasForeignKey(fp => fp.CustomerId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(c => c.Orders)
                 .WithOne(o => o.Customer)

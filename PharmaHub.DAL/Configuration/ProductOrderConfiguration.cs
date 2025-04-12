@@ -30,7 +30,7 @@ namespace PharmaHub.DAL.Configuration
             builder.HasOne(builder => builder.Order)
                 .WithMany(order => order.ProductOrdersList)
                 .HasForeignKey(po => po.OrderId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
         }
 

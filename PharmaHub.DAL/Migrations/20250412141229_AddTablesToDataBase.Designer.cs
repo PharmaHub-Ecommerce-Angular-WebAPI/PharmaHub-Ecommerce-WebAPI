@@ -12,7 +12,7 @@ using PharmaHub.DAL.Context;
 namespace PharmaHub.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250412020556_AddTablesToDataBase")]
+    [Migration("20250412141229_AddTablesToDataBase")]
     partial class AddTablesToDataBase
     {
         /// <inheritdoc />
@@ -93,7 +93,7 @@ namespace PharmaHub.DAL.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(130)");
 
                     b.HasKey("Id");
 
@@ -115,7 +115,7 @@ namespace PharmaHub.DAL.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(130)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -127,7 +127,7 @@ namespace PharmaHub.DAL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(130)");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
@@ -142,7 +142,7 @@ namespace PharmaHub.DAL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(130)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -161,7 +161,8 @@ namespace PharmaHub.DAL.Migrations
             modelBuilder.Entity("PharmaHub.Domain.Entities.FavoriteProduct", b =>
                 {
                     b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(130)
+                        .HasColumnType("nvarchar(130)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -176,7 +177,8 @@ namespace PharmaHub.DAL.Migrations
             modelBuilder.Entity("PharmaHub.Domain.Entities.Identity.User", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(130)
+                        .HasColumnType("nvarchar(130)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -271,7 +273,7 @@ namespace PharmaHub.DAL.Migrations
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(130)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -343,7 +345,7 @@ namespace PharmaHub.DAL.Migrations
 
                     b.Property<string>("PharmacyId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(130)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -519,7 +521,7 @@ namespace PharmaHub.DAL.Migrations
                     b.HasOne("PharmaHub.Domain.Entities.Identity.Customer", "Customer")
                         .WithMany("FavoriteProductsList")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("PharmaHub.Domain.Entities.Product", "Product")
@@ -574,7 +576,7 @@ namespace PharmaHub.DAL.Migrations
                     b.HasOne("PharmaHub.Domain.Entities.Order", "Order")
                         .WithMany("ProductOrdersList")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("PharmaHub.Domain.Entities.Product", "Product")

@@ -42,7 +42,7 @@ namespace PharmaHub.DAL.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(130)", maxLength: 130, nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     city = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
@@ -95,7 +95,7 @@ namespace PharmaHub.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(130)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -117,7 +117,7 @@ namespace PharmaHub.DAL.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(130)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -134,7 +134,7 @@ namespace PharmaHub.DAL.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(130)", nullable: false),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -158,7 +158,7 @@ namespace PharmaHub.DAL.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(130)", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -178,7 +178,7 @@ namespace PharmaHub.DAL.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(130)", maxLength: 130, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -195,7 +195,7 @@ namespace PharmaHub.DAL.Migrations
                 name: "Pharmacies",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(130)", maxLength: 130, nullable: false),
                     PharmacyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     AllowCreditCard = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreditCardNumber = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
@@ -223,7 +223,7 @@ namespace PharmaHub.DAL.Migrations
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    CustomerId = table.Column<string>(type: "nvarchar(130)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -250,7 +250,7 @@ namespace PharmaHub.DAL.Migrations
                     DiscountRate = table.Column<byte>(type: "tinyint", nullable: false, defaultValue: (byte)0),
                     Strength = table.Column<short>(type: "smallint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PharmacyId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    PharmacyId = table.Column<string>(type: "nvarchar(130)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -268,7 +268,7 @@ namespace PharmaHub.DAL.Migrations
                 columns: table => new
                 {
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    CustomerId = table.Column<string>(type: "nvarchar(130)", maxLength: 130, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -283,8 +283,7 @@ namespace PharmaHub.DAL.Migrations
                         name: "FK_FavoriteProducts_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -326,8 +325,7 @@ namespace PharmaHub.DAL.Migrations
                         name: "FK_ProductOrders_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OrderID");
                 });
 
             migrationBuilder.CreateIndex(
