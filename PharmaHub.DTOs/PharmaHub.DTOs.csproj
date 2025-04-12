@@ -11,4 +11,8 @@
     <ProjectReference Include="..\PharmaHub.Service\PharmaHub.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AccountDTOs\Pharmacy\" />
+  </ItemGroup>
+
 </Project>
