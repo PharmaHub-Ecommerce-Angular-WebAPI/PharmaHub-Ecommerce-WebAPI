@@ -5,6 +5,7 @@ using PharmaHub.Domain.Enums;
 using PharmaHub.Domain.Infrastructure;
 
 namespace PharmaHub.Domain.Entities;
+/*
 public class OrderRepository : GenericRepository<Order>, IOrderRepository
 {
     public OrderRepository(ApplicationDbContext context) : base(context)
@@ -39,4 +40,4 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
             .Include(o => o.ProductOrdersList)
             .ToListAsync();
     }
-}
+}*/

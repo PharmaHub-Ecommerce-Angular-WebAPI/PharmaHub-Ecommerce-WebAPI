@@ -18,7 +18,7 @@ namespace PharmaHub.Domain.Entities
         // Relationships
         public ICollection<ProductOrder> ProductOrdersList { get; set; } = new List<ProductOrder>();
 
-        public Guid CustomerId { get; set; }
+        public String CustomerId { get; set; }
         public Customer Customer { get; set; }
     }
 }

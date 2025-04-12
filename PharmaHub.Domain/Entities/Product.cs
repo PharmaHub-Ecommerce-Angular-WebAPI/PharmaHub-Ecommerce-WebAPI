@@ -21,7 +21,7 @@ namespace PharmaHub.Domain.Entities
         public decimal Price { get; set; }
 
         [Range(0, short.MaxValue, ErrorMessage = "Quantity must be zero or more.")]
-        public short Quantity { get; set; } 
+      [Required]  public short Quantity { get; set; } = 1;
 
         [Url(ErrorMessage = "Image URL must be a valid URL.")]
         public string ImageUrl { get; set; } 
@@ -31,7 +31,7 @@ namespace PharmaHub.Domain.Entities
         public byte DiscountRate { get; set; } = 0;
 
         [Range(0, short.MaxValue, ErrorMessage = "Strength must be zero or more.")]
-        public short Strength { get; set; } = default;
+        public short? Strength { get; set; } = default;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -39,7 +39,7 @@ namespace PharmaHub.Domain.Entities
         public ICollection<ProductOrder> ProductOrdersList { get; set; } = new List<ProductOrder>();
         public ICollection<FavoriteProduct> FavoriteProductsList { get; set; } = new List<FavoriteProduct>();
         public ICollection<PackagesComponent> PackagesComponents { get; set; } = new List<PackagesComponent>();
-        public Guid PharmacyId { get; set; } 
+        public string PharmacyId { get; set; } 
         public Pharmacy Pharmacy { get; set; } 
 
     }

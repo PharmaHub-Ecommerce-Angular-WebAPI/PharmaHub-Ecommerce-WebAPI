@@ -24,8 +24,8 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         SuggestedMedicines = new SuggestedMedicineRepository(_context);
         Products = new ProductRepository(_context);
-        Orders = new OrderRepository(_context);
-        FavoriteProducts = new FavoriteProductRepository(_context);
+     //   Orders = new OrderRepository(_context);
+     //   FavoriteProducts = new FavoriteProductRepository(_context);
 
     }
 

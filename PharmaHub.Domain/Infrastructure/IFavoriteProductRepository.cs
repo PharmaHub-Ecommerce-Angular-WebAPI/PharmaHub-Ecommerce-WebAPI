@@ -4,8 +4,8 @@ using PharmaHub.Domain.Entities;
 namespace PharmaHub.Domain.Infrastructure;
 public interface IFavoriteProductRepository : IGenericRepository<FavoriteProduct>
 {
-    Task<List<FavoriteProduct>> GetFavoritesByUserIdAsync(Guid userId);
-    Task<FavoriteProduct?> GetFavoriteByUserAndProductAsync(Guid userId, Guid productId);
-    Task<bool> IsProductFavoritedAsync(Guid userId, Guid productId);
-    Task<bool> RemoveFavoriteAsync(Guid userId, Guid productId);
+    Task<List<FavoriteProduct>> GetFavoritesByUserIdAsync(string userId);
+    Task<FavoriteProduct?> GetFavoriteByUserAndProductAsync(string userId, Guid productId);
+    Task<bool> IsProductFavoritedAsync(string userId, Guid productId);
+    Task<bool> RemoveFavoriteAsync(string userId, Guid productId);
 }

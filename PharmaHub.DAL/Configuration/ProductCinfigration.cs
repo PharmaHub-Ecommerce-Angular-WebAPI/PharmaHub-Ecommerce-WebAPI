@@ -38,8 +38,8 @@ namespace PharmaHub.DAL.Configuration
 
 
             builder.Property(p => p.Quantity)
-                .IsRequired(false)     // Allow null for infinite stock
-                .HasDefaultValue(null); // Null-able to allow for Infinite stock
+                .IsRequired()     // (-1)Allow null for infinite stock
+                .HasDefaultValue(1); // Null-able to allow for Infinite stock
 
 
 
@@ -49,7 +49,7 @@ namespace PharmaHub.DAL.Configuration
 
 
             builder.Property(p => p.DiscountRate)
-                .IsRequired(false)
+                .IsRequired()
                 .HasDefaultValue(0); // Send 0 if not provided (To allow front apply there PIpe line Depend on this value)
 
 
