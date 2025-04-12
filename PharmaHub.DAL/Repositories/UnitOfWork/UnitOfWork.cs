@@ -2,8 +2,6 @@
 using PharmaHub.DAL.Repositories.GenericRepository;
 using PharmaHub.DAL.Repositories.GenericRepositoryl;
 using PharmaHub.DAL.Repositories.SuggestedMedicin;
-using PharmaHub.DALRepositories;
-using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Infrastructure;
 
 namespace PharmaHub.DAL.Repositories;
@@ -11,23 +9,28 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _context;
 
-    private Dictionary<Type, object> _repositories =  new();
+    private Dictionary<Type, object> _repositories = new();
 
     // Implement all interface members
-    public ISuggestedMedicineRepository SuggestedMedicines { get; }
-    public IProductRepository Products { get; } 
-    public IOrderRepository Orders { get; }
-    public IFavoriteProductRepository FavoriteProducts { get; }
+    public ISuggestedMedicineRepository _suggestedMedicinesRepo { get; }
+    public IProductRepository _productsRepo { get; }
+    public IOrderRepository _ordersRepo { get; }
+    public IFavoriteProductRepository _favoriteProductsRepo { get; }
 
-    public UnitOfWork(ApplicationDbContext context)
+    public UnitOfWork(
+          ApplicationDbContext context,
+          ISuggestedMedicineRepository suggestedMedicinesRepo,
+          IProductRepository productsRepo,
+          IOrderRepository ordersRepo,
+          IFavoriteProductRepository favoriteProductsRepo)
     {
         _context = context;
-        SuggestedMedicines = new SuggestedMedicineRepository(_context);
-        Products = new ProductRepository(_context);
-     //   Orders = new OrderRepository(_context);
-     //   FavoriteProducts = new FavoriteProductRepository(_context);
-
+        _suggestedMedicinesRepo = suggestedMedicinesRepo;
+        _productsRepo = productsRepo;
+        _ordersRepo = ordersRepo;
+        //_favoriteProductsRepo = _favoriteProductsRepo;
     }
+
 
     public IGenericRepository<T> Repository<T>() where T : class
     {

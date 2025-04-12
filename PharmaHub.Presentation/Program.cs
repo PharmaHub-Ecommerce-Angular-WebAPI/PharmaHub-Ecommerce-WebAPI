@@ -19,6 +19,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
 
+        #region Injection Dependence Configuration
         // Register Generic Repository
         builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
@@ -29,13 +30,14 @@ public class Program
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
         // Register Unit of Order
-       // builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
         // Register Unit of Favorite Product
-       // builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
+        //builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
 
         // Register Unit of Work
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); 
+        #endregion
 
         // Add services to the container.
 

@@ -7,7 +7,7 @@ namespace PharmaHub.Domain.Infrastructure;
 
 public interface IOrderRepository : IGenericRepository<Order>
 {
-    Task<IReadOnlyList<Order>> GetOrdersByUserIdAsync(Guid userId);
+    Task<IReadOnlyList<Order>> GetOrdersByUserIdAsync(string userId);
     Task<Order?> GetOrderWithDetailsAsync(Guid orderId);
     Task<IReadOnlyList<Order>> GetOrdersByStatusAsync(OrderStatus status);
 }
