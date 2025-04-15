@@ -6,6 +6,11 @@ namespace PharmaHub.DAL.Repositories;
 
 public interface IUnitOfWork 
 {
+    ISuggestedMedicineRepository _suggestedMedicinesRepo { get; }
+    IProductRepository _productsRepo { get; }
+    IOrderRepository _ordersRepo { get; }
+    IFavoriteProductRepository _favoriteProductsRepo { get; }
+
     IGenericRepository<T> Repository<T>() where T : class;
     Task<int> CompleteAsync();
 }
