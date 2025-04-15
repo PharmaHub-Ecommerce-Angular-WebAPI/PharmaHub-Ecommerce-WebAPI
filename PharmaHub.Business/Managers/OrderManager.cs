@@ -1,5 +1,6 @@
-﻿
-using PharmaHub.DAL.Repositories;
+﻿using PharmaHub.DAL.Repositories;
+using  PharmaHub.DTOs;
+
 
 namespace PharmaHub.Business.Managers;
 
