@@ -1,7 +1,7 @@
 ﻿using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Enums;
 
-namespace PharmaHub.DTOs;
+namespace PharmaHub.DTOs.OderDTOs;
 
 public class CreateOrderDTOs
 {
