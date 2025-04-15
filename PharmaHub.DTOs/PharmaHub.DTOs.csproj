@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PharmaHub.Domain\PharmaHub.Domain.csproj" />
-    <ProjectReference Include="..\PharmaHub.Service\PharmaHub.Service.csproj" />
+    <ProjectReference Include="..\PharmaHub.DAL\PharmaHub.DAL.csproj" />
   </ItemGroup>
 
 </Project>
