@@ -11,10 +11,18 @@ public class UnitOfWork : IUnitOfWork
 
     private Dictionary<Type, object> _repositories =  new();
 
-    public ISuggestedMedicineRepository SuggestedMedicineRepository => new SuggestedMedicineRepository(_context);
-    // other repositories...
+    // Implement all interface members
+    public ISuggestedMedicineRepository _suggestedMedicinesRepo { get; }
+    public IProductRepository _productsRepo { get; }
+    public IOrderRepository _ordersRepo { get; }
+    //public IFavoriteProductRepository _favoriteProductsRepo { get; }
 
-    public UnitOfWork(ApplicationDbContext context)
+    public UnitOfWork(
+          ApplicationDbContext context,
+          ISuggestedMedicineRepository suggestedMedicinesRepo,
+          IProductRepository productsRepo,
+          IOrderRepository ordersRepo)
+          //,IFavoriteProductRepository favoriteProductsRepo)
     {
         _context = context;
     }

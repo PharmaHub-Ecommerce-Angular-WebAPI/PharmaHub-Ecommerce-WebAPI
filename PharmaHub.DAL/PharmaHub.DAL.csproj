@@ -20,4 +20,8 @@
     <ProjectReference Include="..\PharmaHub.Domain\PharmaHub.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

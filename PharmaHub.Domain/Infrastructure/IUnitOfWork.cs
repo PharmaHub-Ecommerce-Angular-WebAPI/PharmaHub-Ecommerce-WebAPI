@@ -5,7 +5,7 @@ namespace PharmaHub.DAL.Repositories.UnitOfWork;
 
 public interface IUnitOfWork 
 {
-    ISuggestedMedicineRepository SuggestedMedicineRepository { get; }
+
     IGenericRepository<T> Repository<T>() where T : class;
     Task<int> CompleteAsync();
 }
