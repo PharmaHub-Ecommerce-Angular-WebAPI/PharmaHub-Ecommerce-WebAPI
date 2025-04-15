@@ -20,13 +20,15 @@ namespace PharmaHub.Business.Managers
 
         #region HomePage
 
-        public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size)
+        
+        public async Task<List<Product>> GetAllProducts()
         {
-            
+            var products = await _unitOfWork._productsRepo.GetAllAsync();
+            return products.ToList();
         }
 
         #endregion
-        
+
 
         #endregion
 
