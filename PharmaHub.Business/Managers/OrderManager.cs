@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using PharmaHub.DAL.Repositories;
 
-namespace PharmaHub.Business.Managers
+namespace PharmaHub.Business.Managers;
+
+public class OrderManager
 {
-    public class OrderManager
+    private readonly IUnitOfWork _unitOfWork;
+    public OrderManager(IUnitOfWork unitOfWork)
     {
+        _unitOfWork = unitOfWork;
     }
+
+    public async Task<Read> CreateOrderAsync(CreateOrderDTOs dto)
+
+    => await _unitOfWork._ordersRepo.UpsertAsync(dto.Products);
 }
