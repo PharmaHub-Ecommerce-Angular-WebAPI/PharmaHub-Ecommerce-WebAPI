@@ -6,7 +6,7 @@ using PharmaHub.Domain.Infrastructure;
 
 namespace PharmaHub.DAL.Repositories;
 
-public class FavoriteProductRepository : GenericRepository<FavoriteProduct>////////Fix Inert from lock interface 
+public class FavoriteProductRepository : GenericRepository<FavoriteProduct> ,IFavoriteProductRepository////////Fix Inert from lock interface 
 {
     public FavoriteProductRepository(ApplicationDbContext context) : base(context) { }
 

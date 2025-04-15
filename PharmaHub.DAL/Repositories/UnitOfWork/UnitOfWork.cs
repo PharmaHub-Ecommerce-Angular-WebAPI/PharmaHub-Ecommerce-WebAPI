@@ -28,7 +28,7 @@ public class UnitOfWork : IUnitOfWork
         _suggestedMedicinesRepo = suggestedMedicinesRepo;
         _productsRepo = productsRepo;
         _ordersRepo = ordersRepo;
-        //_favoriteProductsRepo = _favoriteProductsRepo;
+        _favoriteProductsRepo = favoriteProductsRepo;
     }
 
 
