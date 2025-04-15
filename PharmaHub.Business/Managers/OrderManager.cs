@@ -1,9 +1,8 @@
 ﻿using PharmaHub.DAL.Repositories;
-using  PharmaHub.DTOs;
+using PharmaHub.DTOs.OderDTOs;
 
 
 namespace PharmaHub.Business.Managers;
-
 public class OrderManager
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -12,7 +11,8 @@ public class OrderManager
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Read> CreateOrderAsync(CreateOrderDTOs dto)
+    public async Task<ReadOrderDto> CreateOrderAsync(CreateOrderDTOs dto)
+    {
 
-    => await _unitOfWork._ordersRepo.UpsertAsync(dto.Products);
+    }
 }
