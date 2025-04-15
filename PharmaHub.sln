@@ -9,9 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Presentation", "P
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Service", "PharmaHub.Service\PharmaHub.Service.csproj", "{967B4A42-B177-4416-8B97-DFC9DCE553DE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C2337D4D-B22F-41C0-AC34-15FD7875DDE1} = {C2337D4D-B22F-41C0-AC34-15FD7875DDE1}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Business", "PharmaHub.Business\PharmaHub.Business.csproj", "{C2337D4D-B22F-41C0-AC34-15FD7875DDE1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -23,7 +20,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.DTOs", "PharmaHub.DTOs\PharmaHub.DTOs.csproj", "{DB62C0A5-52BC-460B-A326-2BF6E59E9B17}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B} = {4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B}
-		{967B4A42-B177-4416-8B97-DFC9DCE553DE} = {967B4A42-B177-4416-8B97-DFC9DCE553DE}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaHub.Domain", "PharmaHub.Domain\PharmaHub.Domain.csproj", "{4588F9AE-A645-4FF2-8A45-3B9F9D0E4C5B}"

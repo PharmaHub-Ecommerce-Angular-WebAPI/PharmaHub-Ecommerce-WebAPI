@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PharmaHub.DTOs\PharmaHub.DTOs.csproj" />
+    <ProjectReference Include="..\PharmaHub.Business\PharmaHub.Business.csproj" />
   </ItemGroup>
 
 </Project>

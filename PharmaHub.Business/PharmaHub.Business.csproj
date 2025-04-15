@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PharmaHub.DTOs\PharmaHub.DTOs.csproj" />
+    <ProjectReference Include="..\PharmaHub.Service\PharmaHub.Service.csproj" />
+  </ItemGroup>
+
 </Project>
