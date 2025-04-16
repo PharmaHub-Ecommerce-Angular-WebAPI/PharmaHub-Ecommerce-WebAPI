@@ -8,6 +8,7 @@ public interface IProductRepository : IGenericRepository<Product>
 {
 
  public Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size, int maxPrice, bool Offer, string pharmacyId, params ProductCategory[] categories);
+    public Task<IReadOnlyList<Product>> GetRangeProductsByIdsAsync(List<Guid> productIds);
 public Task<int> UpdateProductNameAsync(Guid id, string newName);
 public Task<List<string>> GetRelatedComponents(Guid productId);
 public Task<int> DeleteProductAsync(Guid id);

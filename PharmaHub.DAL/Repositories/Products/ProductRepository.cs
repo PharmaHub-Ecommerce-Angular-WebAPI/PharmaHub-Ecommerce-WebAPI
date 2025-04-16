@@ -80,6 +80,15 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
         return result;
     }
 
+    public async Task<IReadOnlyList<Product>> GetRangeProductsByIdsAsync(List<Guid> productIds)
+    {
+        return await _dbSet
+            .AsNoTracking()
+            .Where(p => productIds.Contains(p.Id)) 
+            .ToListAsync();
+    }
+
+
     public async Task<List<string>> GetRelatedComponents(Guid productId)
     {
         var components = await _dbSet
