@@ -16,19 +16,22 @@ public class UnitOfWork : IUnitOfWork
     public IProductRepository _productsRepo { get; }
     public IOrderRepository _ordersRepo { get; }
     public IFavoriteProductRepository _favoriteProductsRepo { get; }
+    public IPackagesComponentRepository _PackagesComponentRepo { get; }
 
     public UnitOfWork(
           ApplicationDbContext context,
           ISuggestedMedicineRepository suggestedMedicinesRepo,
           IProductRepository productsRepo,
           IOrderRepository ordersRepo,
-          IFavoriteProductRepository favoriteProductsRepo)
+          IFavoriteProductRepository favoriteProductsRepo,
+          IPackagesComponentRepository packagesComponentRepo)
     {
         _context = context;
         _suggestedMedicinesRepo = suggestedMedicinesRepo;
         _productsRepo = productsRepo;
         _ordersRepo = ordersRepo;
         _favoriteProductsRepo = favoriteProductsRepo;
+        _PackagesComponentRepo = packagesComponentRepo;
     }
 
 
