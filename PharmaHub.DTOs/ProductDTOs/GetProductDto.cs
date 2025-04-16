@@ -12,14 +12,14 @@ namespace PharmaHub.DTOs.ProductDTOs
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public decimal Price { get; set; }
         public ProductCategory Category { get; set; }
         public byte DiscountRate { get; set; }
         public short? Strength { get; set; } = default;
-        public ICollection<string> PackageComponents { get; set; } = new List<string>();
+        public ICollection<string>? PackageComponents { get; set; } = new List<string>();
 
-       public GetProductDto(Guid id, string name, string description, string imageUrl, decimal price, ProductCategory category, byte discountRate, short? strength, ICollection<string> packageComponents)
+       public GetProductDto(Guid id, string name, string description, string? imageUrl, decimal price, ProductCategory category, byte discountRate, short? strength, ICollection<string>? packageComponents)
         {
             Id = id;
             Name = name;
