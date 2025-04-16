@@ -3,8 +3,9 @@ using PharmaHub.Domain.Entities;
 
 namespace PharmaHub.DAL.Repositories.SuggestedMedicin;
 
-public interface ISuggestedMedicineRepository 
+public interface ISuggestedMedicineRepository : IGenericRepository<SuggestedMedicine>
 {
-    Task<IEnumerable<SuggestedMedicine>> GetAllByUserAsync(Guid userId);
-    Task AddSuggestedMedicineAsync(SuggestedMedicine newMed);
+    
+  public  Task AddSuggestedMedicineAsync(SuggestedMedicine newMed);
+  public Task<IReadOnlyList<SuggestedMedicine>> GetSuggestedMedicineByName(string name);
 }
