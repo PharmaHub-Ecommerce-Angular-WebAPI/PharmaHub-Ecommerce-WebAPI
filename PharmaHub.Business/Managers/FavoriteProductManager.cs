@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PharmaHub.Business.Contracts;
 using PharmaHub.DAL.Repositories;
 using PharmaHub.Domain.Entities;
 using PharmaHub.DTOs.ProductDTOs;
 
 namespace PharmaHub.Business.Managers
 {
-    public class FavoriteProductManager 
+    public class FavoriteProductManager : IFavoriteProductManager
     {
         private readonly IUnitOfWork _unitOfWork;
 
