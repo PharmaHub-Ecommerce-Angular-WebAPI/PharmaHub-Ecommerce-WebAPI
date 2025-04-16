@@ -1,17 +1,17 @@
 ﻿using PharmaHub.Domain.Entities;
 
-namespace PharmaHub.DTOs.ProductOrderDTOs;
+namespace PharmaHub.DTOs;
 
 public class ProductOrderDTOs
 {
-    public ProductOrderDTOs(ProductOrder productOrder)
-    {
-        ProductId = productOrder.ProductId;
-        OrderId = productOrder.OrderId;
-        Amount = productOrder.Amount;
-    }
     public Guid ProductId { get; set; }
-    public Guid OrderId { get; set; }
-    public short Amount { get; set; } 
+    public string Name { get; set; }
+    public short Amount { get; set; }
 
+    public ProductOrderDTOs(ProductOrder po)
+    {
+        ProductId = po.ProductId;
+        Name = po.Product?.Name ?? "";
+        Amount =po.Amount;
+    }
 }

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PharmaHub.Domain.Entities;
+using PharmaHub.Domain.Objects;
+using PharmaHub.DTOs.OderDTOs;
 
-namespace PharmaHub.Business.Contracts
+namespace PharmaHub.Business.Contracts;
+
+public interface IOrderManager
 {
-    internal interface IOrderManager
-    {
-    }
+    Task<ProblemDetails?> CreateOrderAsync(CreateOrderDTOs orderDto);
+    Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId);
 }
