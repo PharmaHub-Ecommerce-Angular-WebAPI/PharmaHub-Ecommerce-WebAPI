@@ -10,6 +10,7 @@ public interface IUnitOfWork
     IProductRepository _productsRepo { get; }
     IOrderRepository _ordersRepo { get; }
     IFavoriteProductRepository _favoriteProductsRepo { get; }
+    IPackagesComponentRepository _PackagesComponentRepo { get; }
 
     IGenericRepository<T> Repository<T>() where T : class;
     Task<int> CompleteAsync();

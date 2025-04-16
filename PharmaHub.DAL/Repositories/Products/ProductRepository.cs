@@ -11,14 +11,51 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
 {
     public ProductRepository(ApplicationDbContext context) : base(context) { }
 
-    // View products paginated and ordered by latest
-    public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size)
+    // View products paginated and ordered by latest For home page
+    public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size, int maxPrice, bool Offer, params ProductCategory[] categories)
+    {
+        var  query = _dbSet
+            .AsNoTracking()
+            .Where(p => categories.Contains(p.Category));
+
+            if (maxPrice > 0)
+            {
+            query = query.Where(p => p.Price <= maxPrice);
+            }
+            if(Offer)
+            {
+            query = query.Where(p => p.DiscountRate > 0);
+            }
+            else
+            {
+            query = query.Where(p => p.DiscountRate == 0);
+            }
+
+        query = query
+            .OrderByDescending(p => p.CreatedAt)
+            .Skip((page - 1) * size)
+            .Take(size);
+        return await query.ToListAsync();
+     
+    }
+
+   
+
+    public async Task<List<string>> GetRelatedComponents(Guid productId)
+    {
+        var components = await _dbSet
+            .AsNoTracking()
+            .Where(p => p.Id == productId)
+            .SelectMany(p => p.PackagesComponents.Select(pc => pc.ComponentName))
+            .ToListAsync();
+        return components;
+    }
+
+    // Get product Offers
+    public async Task<IReadOnlyList<Product>> GetAllAsync()
     {
         return await _dbSet
             .AsNoTracking()
-            .OrderByDescending(p => p.CreatedAt) 
-            .Skip((page - 1) * size)
-            .Take(size)
             .ToListAsync();
     }
 
@@ -38,14 +75,6 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
             .ExecuteDeleteAsync();
     }
 
-    // Get by category 
-    public async Task<IReadOnlyList<Product>> GetProductsByCategoryAsync(ProductCategory category)
-    {
-        return await _dbSet
-            .AsNoTracking()
-            .Where(p => p.Category == category)
-            .ToListAsync();
-    }
 
     // Get by name (exact or partial)
     public async Task<IReadOnlyList<Product>> GetProductsByNameAsync(string name)
