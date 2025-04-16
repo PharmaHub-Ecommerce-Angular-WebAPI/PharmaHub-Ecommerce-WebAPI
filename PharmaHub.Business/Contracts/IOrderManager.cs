@@ -1,10 +1,11 @@
 ﻿using PharmaHub.Domain.Entities;
+using PharmaHub.Domain.Objects;
 using PharmaHub.DTOs.OderDTOs;
 
 namespace PharmaHub.Business.Contracts;
 
 public interface IOrderManager
 {
-    Task<OrderDetailsDto> CreateOrderAsync(CreateOrderDTOs orderDto);
+    Task<ProblemDetails?> CreateOrderAsync(CreateOrderDTOs orderDto);
     Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId);
 }

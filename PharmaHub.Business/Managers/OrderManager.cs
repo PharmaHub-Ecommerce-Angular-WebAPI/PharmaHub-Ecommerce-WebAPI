@@ -2,6 +2,7 @@
 using PharmaHub.DAL.Repositories;
 using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Enums;
+using PharmaHub.Domain.Objects;
 using PharmaHub.DTOs;
 using PharmaHub.DTOs.OderDTOs;
 
@@ -17,25 +18,21 @@ public class OrderManager : IOrderManager
         _productManager = productManager;
     }
 
-    public async Task<OrderDetailsDto> CreateOrderAsync(CreateOrderDTOs orderDto)
+    public async Task<ProblemDetails?> CreateOrderAsync(CreateOrderDTOs orderDto)
     {
         // 1. Validate data
         if (orderDto.OrderItems == null || !orderDto.OrderItems.Any())
-            throw new Exception("Order must contain at least one product.");
-
-        var productIds = orderDto.OrderItems.Select(x => x.ProductId).ToList();
+            return new ProblemDetails("InvalidOrder", "Order must contain at least one product.");
 
         // 2. Validate and process each product
         foreach (var item in orderDto.OrderItems)
         {
-            var result = await _productManager.PurchasingProduct(item.ProductId, item.Quantity);
-            if (result is not null)
-            {
-                throw new Exception($"Product purchase failed: {result.name} - {result.description}");
-            }
+            var problem = await _productManager.PurchasingProduct(item.ProductId, item.Quantity);
+            if (problem != null)
+                return problem;
         }
 
-        // 3. Create Order 
+        // 3. Create Order
         var order = new Order
         {
             ID = Guid.NewGuid(),
@@ -44,24 +41,34 @@ public class OrderManager : IOrderManager
             OrderStatus = OrderStatus.Pending,
             CustomerId = orderDto.CustomerId,
             ProductOrdersList = new List<ProductOrder>()
-          
         };
 
-        // Update product quantities
+        // 4. Build ProductOrders and update product quantities
         foreach (var item in orderDto.OrderItems)
         {
             var product = await _unitOfWork._productsRepo.GetIdAsync(item.ProductId);
-            product!.Quantity -= item.Quantity;
+            if (product == null)
+                return new ProblemDetails("ProductNotFound", $"Product with ID {item.ProductId} not found.");
+
+            product.Quantity -= item.Quantity;
             await _unitOfWork._productsRepo.UpdatedAsync(product);
+
+            order.ProductOrdersList.Add(new ProductOrder
+            {
+                ProductId = item.ProductId,
+                Amount = item.Quantity,
+                OrderId = order.ID
+            });
         }
 
-        // Save changes
+        // 5. Save order
         await _unitOfWork._ordersRepo.AddAsync(order);
         await _unitOfWork.CompleteAsync();
 
-        // Return the created order details
-        return new OrderDetailsDto(order);
+        // 6. Return null to indicate success (no problem)
+        return null;
     }
+
 
     public async Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId)
     {
