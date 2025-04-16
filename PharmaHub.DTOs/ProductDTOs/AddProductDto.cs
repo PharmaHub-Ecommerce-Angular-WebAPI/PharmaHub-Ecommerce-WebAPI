@@ -19,7 +19,7 @@ namespace PharmaHub.DTOs.ProductDTOs
 
         public List<string> Components { get; set; } = new List<string>();
 
-        public AddProductDto(string name, string? description, string? imageUrl, decimal price, short quantity, string? strength, string category, Guid pharmacyId, List<string> components)
+        public AddProductDto(string name, string? description, string? imageUrl, decimal price, short quantity, short? strength, string category, string pharmacyId, List<string> components)
         {
             Name = name;
             Description = description;

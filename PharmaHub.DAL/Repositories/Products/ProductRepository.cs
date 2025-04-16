@@ -12,34 +12,73 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     public ProductRepository(ApplicationDbContext context) : base(context) { }
 
     // View products paginated and ordered by latest For home page
-    public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size, int maxPrice, bool Offer, params ProductCategory[] categories)
+    //public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size, int maxPrice, bool Offer,string pharmacyId , params ProductCategory[] categories)
+    //{
+    //    var query = _dbSet
+    //        .AsNoTracking()
+    //        .Where(p => categories.Contains(p.Category) && p.Quantity > 0);
+
+    //        if (maxPrice > 0)
+    //        {
+    //        query = query.Where(p => p.Price <= maxPrice);
+    //        }
+    //        if(!string.IsNullOrEmpty(pharmacyId))
+    //         {
+    //        query = query.Where(p => p.PharmacyId == pharmacyId);
+    //    }
+    //        if (Offer)
+    //        {
+    //        query = query.Where(p => p.DiscountRate > 0);
+    //        }
+    //        else
+    //        {
+    //        query = query.Where(p => p.DiscountRate == 0);
+    //        }
+
+    //    query = query
+    //        .OrderByDescending(p => p.CreatedAt)
+    //        .Skip((page - 1) * size)
+    //        .Take(size);
+    //    return await query.ToListAsync();
+    //}
+
+    public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(
+    int page,
+    int sizePerCategory,
+    int maxPrice,
+    bool offer,
+    string pharmacyId,
+    params ProductCategory[] categories)
     {
-        var  query = _dbSet
-            .AsNoTracking()
-            .Where(p => categories.Contains(p.Category));
+        var result = new List<Product>();
+
+        foreach (var category in categories)
+        {
+            var query = _dbSet
+                .AsNoTracking()
+                .Where(p => p.Category == category && p.Quantity > 0);
 
             if (maxPrice > 0)
-            {
-            query = query.Where(p => p.Price <= maxPrice);
-            }
-            if(Offer)
-            {
-            query = query.Where(p => p.DiscountRate > 0);
-            }
-            else
-            {
-            query = query.Where(p => p.DiscountRate == 0);
-            }
+                query = query.Where(p => p.Price <= maxPrice);
 
-        query = query
-            .OrderByDescending(p => p.CreatedAt)
-            .Skip((page - 1) * size)
-            .Take(size);
-        return await query.ToListAsync();
-     
+            if (!string.IsNullOrEmpty(pharmacyId))
+                query = query.Where(p => p.PharmacyId == pharmacyId);
+
+            query = offer
+                ? query.Where(p => p.DiscountRate > 0)
+                : query.Where(p => p.DiscountRate == 0);
+
+            var categoryProducts = await query
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * sizePerCategory)
+                .Take(sizePerCategory)
+                .ToListAsync();
+
+            result.AddRange(categoryProducts);
+        }
+
+        return result;
     }
-
-   
 
     public async Task<List<string>> GetRelatedComponents(Guid productId)
     {

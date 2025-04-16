@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PharmaHub.Business.Managers;
 using PharmaHub.DAL.Context;
 using PharmaHub.DAL.Repositories;
 using PharmaHub.DAL.Repositories.GenericRepository;
@@ -32,8 +33,11 @@ public class Program
         // Register Unit of Order
         builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
+        // Register Unit of PackagesComponent
+        builder.Services.AddScoped<IPackagesComponentRepository,PackagesComponent>();
+
         // Register Unit of Favorite Product
-        //builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
+        builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
 
         // Register Unit of Work
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); 

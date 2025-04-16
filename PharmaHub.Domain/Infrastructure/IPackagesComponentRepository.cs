@@ -11,6 +11,6 @@ namespace PharmaHub.Domain.Infrastructure
     public interface IPackagesComponentRepository:IGenericRepository<PackagesComponent>
     {
         public Task<List<string>> GetPackagesComponentsByProductIdAsync(Guid productId);
-        public  Task AddComponents(ICollection<PharmaHub.Domain.Entities.PackagesComponent> components)
+        public Task AddComponents(ICollection<PharmaHub.Domain.Entities.PackagesComponent> components);
     }
 }

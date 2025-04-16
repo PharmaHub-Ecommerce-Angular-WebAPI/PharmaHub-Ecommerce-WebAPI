@@ -7,10 +7,10 @@ using PharmaHub.DAL.Repositories;
 
 namespace PharmaHub.Business.Managers
 {
-    public class PackagesComponent
+    public class PackagesComponentManager
     {
         private readonly IUnitOfWork _unitOfWork;
-        public PackagesComponent(IUnitOfWork unitOfWork)
+        public PackagesComponentManager(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
