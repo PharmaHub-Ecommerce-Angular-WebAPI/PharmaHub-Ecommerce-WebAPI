@@ -6,6 +6,7 @@ using PharmaHub.DAL.Context;
 using PharmaHub.DAL.Repositories;
 using PharmaHub.DAL.Repositories.GenericRepository;
 using PharmaHub.DAL.Repositories.GenericRepositoryl;
+using PharmaHub.DAL.Repositories.PackagesComponent;
 using PharmaHub.DAL.Repositories.SuggestedMedicin;
 using PharmaHub.DALRepositories;
 using PharmaHub.Domain.Entities;
@@ -34,7 +35,7 @@ public class Program
         builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
         // Register Unit of PackagesComponent
-        builder.Services.AddScoped<IPackagesComponentRepository,PackagesComponent>();
+        builder.Services.AddScoped<IPackagesComponentRepository, PackagesComponentRepository>();
 
         // Register Unit of Favorite Product
         builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
