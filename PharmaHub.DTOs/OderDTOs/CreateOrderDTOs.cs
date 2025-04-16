@@ -10,10 +10,11 @@ public class CreateOrderDTOs
         ID = entity.ID;
         PaymentMethod = entity.PaymentMethod;
         OrderStatus = entity.OrderStatus;
-        CustomerName = entity.Customer.UserName;
+        CustomerId = entity.CustomerId;
     }
     public Guid ID { get; set; }
     public PaymentMethods PaymentMethod { get; set; }
     public OrderStatus OrderStatus { get; set; } 
-    public string? CustomerName { get; set; } 
+    public string CustomerId { get; set; }
+    public ICollection<CreateOrderItemDTO> OrderItems { get; set; } = new HashSet<CreateOrderItemDTO>();
 }
