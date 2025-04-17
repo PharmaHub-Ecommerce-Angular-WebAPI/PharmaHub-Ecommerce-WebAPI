@@ -1,0 +1,30 @@
+﻿using PharmaHub.DTOs.Authentication;
+using PharmaHub.Presentation.ActionRequest.Account;
+
+namespace PharmaHub.Presentation.Extensions;
+
+public static class RegisterAccountExtensions
+{
+    public static CustomerDto ToDtoCustomer(this RegisterUserActionRequest newAccount)
+          => new CustomerDto
+          {
+              CustomerName = newAccount.CustomerName,
+              Password = newAccount.Password,
+              ConfirmPassword = newAccount.ConfirmPassword,
+              city = newAccount.City,
+              Country = newAccount.Country,
+              PhoneNumber = newAccount.PhoneNumber
+          };
+    public static PharmacyDto ToDtoPharmacy(this RegisterPharmacyActionRequest newAccount)
+        => new PharmacyDto
+        {
+            PharmacyName = newAccount.PharmacyName,
+            Password = newAccount.Password,
+            ConfirmPassword = newAccount.ConfirmPassword,
+            city = newAccount.city,
+            AccountStat =newAccount.AccountStat,
+            Country = newAccount.Country,
+            PhoneNumber = newAccount.PhoneNumber
+        };
+
+}
