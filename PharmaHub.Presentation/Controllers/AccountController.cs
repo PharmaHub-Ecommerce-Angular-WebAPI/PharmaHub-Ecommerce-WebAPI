@@ -23,7 +23,7 @@ namespace PharmaHub.Presentation.Controllers
             _config = config;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterUserActionRequest request)
         {
             if (!ModelState.IsValid)
@@ -42,7 +42,7 @@ namespace PharmaHub.Presentation.Controllers
 
         // 🔁 Extracted mapping method
     
-        [HttpPost]
+        [HttpPost("pharmacyregister")]
         public async Task<IActionResult> RegisterPharmacy([FromBody] RegisterPharmacyActionRequest request)
         {
             if (!ModelState.IsValid)
