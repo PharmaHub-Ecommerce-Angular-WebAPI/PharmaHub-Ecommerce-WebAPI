@@ -8,4 +8,5 @@ public interface ISuggestedMedicineRepository : IGenericRepository<SuggestedMedi
     
   public  Task AddSuggestedMedicineAsync(SuggestedMedicine newMed);
   public Task<IReadOnlyList<SuggestedMedicine>> GetSuggestedMedicineByName(string name);
+
 }
