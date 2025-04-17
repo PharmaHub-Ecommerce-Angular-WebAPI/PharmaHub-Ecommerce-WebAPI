@@ -6,6 +6,6 @@ namespace PharmaHub.DAL.Repositories.SuggestedMedicin;
 public interface ISuggestedMedicineRepository : IGenericRepository<SuggestedMedicine>
 {
     
-  public  Task AddSuggestedMedicineAsync(SuggestedMedicine newMed);
+  public  Task AddRangeSuggestedMedicineAsync(params SuggestedMedicine[] newMed);
   public Task<IReadOnlyList<SuggestedMedicine>> GetSuggestedMedicineByName(string name);
 }

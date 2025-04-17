@@ -9,7 +9,7 @@ namespace PharmaHub.Business.Contracts
 {
     public interface ISuggestedMedicineManager
     {
-        public Task AddSuggestedMedicineAsync(CreateSuggestedMedicineDto newMed);
+        public Task AddRangeSuggestedMedicineAsync(params CreateSuggestedMedicineDto[] newMed);
         public Task RemoveSuggestedMedicineAsync(Guid id);
         public Task<IReadOnlyList<GetSuggestedMedicineDto>> SearchSuggestedMedicineAsync(string name);
 

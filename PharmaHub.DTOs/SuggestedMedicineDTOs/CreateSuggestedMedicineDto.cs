@@ -9,6 +9,7 @@ namespace PharmaHub.DTOs.SuggestedMedicineDTOs
 {
     public class CreateSuggestedMedicineDto
     {
+        public Guid Id = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
         public short Strength { get; set; } = default;
     }
