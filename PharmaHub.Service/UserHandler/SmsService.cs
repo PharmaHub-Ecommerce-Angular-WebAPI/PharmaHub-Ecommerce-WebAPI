@@ -2,7 +2,7 @@
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
-namespace PharmaHub.Service.Services;
+namespace PharmaHub.Service.UserHandler; 
 
 public class SmsService : ISmsService
 {

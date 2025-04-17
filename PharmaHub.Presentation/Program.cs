@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using PharmaHub.Business.Contracts;
 using PharmaHub.Business.Managers;
 using PharmaHub.DAL.Context;
 using PharmaHub.DAL.Repositories;
@@ -17,6 +18,7 @@ using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Infrastructure;
 using PharmaHub.Service.JWT_Handler;
+using PharmaHub.Service.UserHandler;
 
 namespace PharmaHub.Presentation;
 

@@ -1,4 +1,4 @@
-﻿namespace PharmaHub.Service.Services;
+﻿namespace PharmaHub.Service.UserHandler;
 
 public interface ISmsService
 {

@@ -4,7 +4,7 @@ using PharmaHub.DTOs.Authentication;
 using PharmaHub.Business.Extensions;
 using NETCore.MailKit.Core;
 
-namespace PharmaHub.Service.Services;
+namespace PharmaHub.Service.UserHandler;
 
 public class UserService : IUserService
 {
