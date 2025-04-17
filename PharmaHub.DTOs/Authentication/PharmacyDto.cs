@@ -18,9 +18,10 @@ public class PharmacyDto
         Address = ph.Address;
         OpenTime = ph.OpenTime;
         CloseTime = ph.CloseTime;
-
+        AccountStat = ph.AccountStat;
     }
     public string PharmacyName { get; set; } = string.Empty;
+    public AccountStats AccountStat { get; set; } = AccountStats.Pending; //Pending by default`
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; }
     public string ConfirmPassword { get; set; }
