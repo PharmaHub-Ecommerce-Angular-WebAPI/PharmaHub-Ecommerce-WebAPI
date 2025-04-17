@@ -69,7 +69,11 @@ public class Program
         //Register Unit of User Services 
         builder.Services.AddScoped<IUserService, UserService>();
 
+        //Register Unit of SMS
         builder.Services.AddScoped<ISmsService, SmsService>();
+
+        //Register Unit of File Service
+        builder.Services.AddScoped<IFileService, FileServices>();
 
 
         #endregion
