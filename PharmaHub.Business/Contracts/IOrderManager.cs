@@ -8,4 +8,5 @@ public interface IOrderManager
 {
     Task<ProblemDetails?> CreateOrderAsync(CreateOrderDTOs orderDto);
     Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId);
+    Task<Order?> GetOrderByIdAsync(Guid orderId);
 }

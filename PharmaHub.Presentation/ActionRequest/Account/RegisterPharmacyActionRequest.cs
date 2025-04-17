@@ -31,7 +31,7 @@ namespace PharmaHub.Presentation.ActionRequest.Account
 
         [Required(ErrorMessage = "Formal papers URL is required.")]
         [Url(ErrorMessage = "Formal papers URL must be a valid URL.")]
-        public string FormalPapersURL { get; set; }
+        public IFormFile FormalPapersURL { get; set; }
 
         [Required(ErrorMessage = "Logo URL is required.")]
         [Url(ErrorMessage = "Logo URL must be a valid URL.")]

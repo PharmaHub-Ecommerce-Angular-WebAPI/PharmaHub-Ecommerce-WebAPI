@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Presentation.ActionRequest.Account;
+using PharmaHub.Service.UserHandler;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -16,11 +18,13 @@ namespace PharmaHub.Presentation.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _config;
+        private readonly IFileService _fileService;
 
-        public AccountController(UserManager<User> userManager, IConfiguration config)
+        public AccountController(UserManager<User> userManager, IConfiguration config ,IFileService fileService)
         {
             _userManager = userManager;
             _config = config;
+            _fileService=fileService;
         }
 
         #region Register User
@@ -47,9 +51,10 @@ namespace PharmaHub.Presentation.Controllers
         public async Task<IActionResult> RegisterPharmacy([FromBody] RegisterPharmacyActionRequest request)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var pharmacy = MapToPharmacy(request);
+             return BadRequest(ModelState);
+            
+            var uniqueFileName = _fileService.UploadFile(request.FormalPapersURL, "pdf");
+            var pharmacy = MapToPharmacy(request , uniqueFileName);
 
             var result = await _userManager.CreateAsync(pharmacy, request.Password);
 
@@ -148,7 +153,7 @@ namespace PharmaHub.Presentation.Controllers
 
         #region Mapping method
 
-        private Pharmacy MapToPharmacy(RegisterPharmacyActionRequest request)
+        private Pharmacy MapToPharmacy(RegisterPharmacyActionRequest request , string uniqueFileName)
         {
             return new Pharmacy
             {
@@ -158,7 +163,7 @@ namespace PharmaHub.Presentation.Controllers
                 Country = request.Country,
                 city = request.city,
                 AccountStat = request.AccountStat,
-                FormalPapersURL = request.FormalPapersURL,
+                FormalPapersURL = uniqueFileName,
                 LogoURL = request.LogoURL,
                 CreditCardNumber = request.CreditCardNumber,
                 OpenTime = request.OpenTime,

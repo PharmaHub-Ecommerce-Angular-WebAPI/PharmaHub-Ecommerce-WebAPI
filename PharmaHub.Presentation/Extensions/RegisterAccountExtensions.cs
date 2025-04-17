@@ -22,6 +22,11 @@ public static class RegisterAccountExtensions
             Password = newAccount.Password,
             ConfirmPassword = newAccount.ConfirmPassword,
             city = newAccount.city,
+            OpenTime = newAccount.OpenTime,
+            CloseTime = newAccount.CloseTime,
+            FormalPapersURL = newAccount.FormalPapersURL,
+            LogoURL = newAccount.LogoURL,
+            CreditCardNumber = newAccount.CreditCardNumber,
             AccountStat =newAccount.AccountStat,
             Country = newAccount.Country,
             PhoneNumber = newAccount.PhoneNumber

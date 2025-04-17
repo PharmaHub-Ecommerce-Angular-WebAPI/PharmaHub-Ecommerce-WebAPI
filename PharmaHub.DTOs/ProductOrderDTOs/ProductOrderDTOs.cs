@@ -2,16 +2,5 @@
 
 namespace PharmaHub.DTOs;
 
-public class ProductOrderDTOs
-{
-    public Guid ProductId { get; set; }
-    public string Name { get; set; }
-    public short Amount { get; set; }
+public record class ProductOrderDTOs(Guid ProductId, short Amount, string ProductName);
 
-    public ProductOrderDTOs(ProductOrder po)
-    {
-        ProductId = po.ProductId;
-        Name = po.Product?.Name ?? "";
-        Amount =po.Amount;
-    }
-}

@@ -73,21 +73,34 @@ public class OrderManager : IOrderManager
     public async Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId)
     {
         var order = await _unitOfWork._ordersRepo.GetOrderWithDetailsAsync(orderId);
-        return order != null
-            ? MapToOrderDetailsDto(order)
-            : throw new ($"Order with ID {orderId} not found");
+
+        if (order == null)
+            return null;
+
+        return MapToOrderDetailsDto(order);
     }
 
-    private OrderDetailsDto MapToOrderDetailsDto(Order order)
+    public async Task<Order?> GetOrderByIdAsync(Guid orderId)
 
-        => new OrderDetailsDto(order)
-        {
-            ID = order.ID,
-            CustomerName = order.Customer?.UserName ?? "Unknown",
-            PaymentMethod = order.PaymentMethod, 
-            OrderStatus = order.OrderStatus, 
-            CreatedAt = order.OrderDate,
-        };
+        => await _unitOfWork._ordersRepo.GetIdAsync(orderId);
     
-    
+    private OrderDetailsDto MapToOrderDetailsDto(Order order)
+    {
+        decimal totalAmount = order.ProductOrdersList?
+            .Sum(po => (po.Product?.Price ?? 0) * po.Amount) ?? 0;
+
+        return new OrderDetailsDto(
+            order.ID,
+            order.Customer?.UserName ?? "Unknown",
+            order.PaymentMethod,
+            order.OrderStatus,
+            order.OrderDate,
+            totalAmount,
+            order.ProductOrdersList?.Select(po => new ProductOrderDTOs(
+                po.ProductId,
+                po.Amount,
+                po.Product?.Name ?? "Unknown"
+            )).ToList() ?? new List<ProductOrderDTOs>()
+        );
+    }
 }
