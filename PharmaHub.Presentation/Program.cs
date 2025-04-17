@@ -18,6 +18,7 @@ using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Infrastructure;
 using PharmaHub.Service.JWT_Handler;
+using PharmaHub.Service.OpenFDA_Handler;
 using PharmaHub.Service.UserHandler;
 
 namespace PharmaHub.Presentation;
@@ -77,8 +78,9 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddSingleton<VerificationCodeStore>();
-    
-      
+
+        // Add Services to OpenFDA
+        builder.Services.AddHttpClient<OpenFDAService>();
 
         #region Make_connectionstring
 
