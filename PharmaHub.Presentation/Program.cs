@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PharmaHub.Business.Contracts;
 using PharmaHub.Business.Managers;
 using PharmaHub.DAL.Context;
 using PharmaHub.DAL.Repositories;
@@ -10,7 +11,9 @@ using PharmaHub.DAL.Repositories.PackagesComponent;
 using PharmaHub.DAL.Repositories.SuggestedMedicin;
 using PharmaHub.DALRepositories;
 using PharmaHub.Domain.Entities;
+using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Infrastructure;
+using PharmaHub.Service.Services;
 
 namespace PharmaHub.Presentation;
 
@@ -41,10 +44,36 @@ public class Program
         builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
 
         // Register Unit of Work
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); 
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        //Register Unit of SMS
+        builder.Services.AddScoped<ISmsService, SmsService>();
+
+        //Register Unit Of Product Manager
+        builder.Services.AddScoped<IProductManager, ProductManager>();
+
+        //Register unit Of Order Manager
+        builder.Services.AddScoped<IOrderManager, OrderManager>();
+
+        //Register Unit of Favorite Product Manager
+        builder.Services.AddScoped<IFavoriteProductManager, FavoriteProductManager>();
+
+        //Register Unit of Suggested Medicine Manager
+        builder.Services.AddScoped<ISuggestedMedicineManager, SuggestedMedicineManager>();
+
+        //Register Unit of User Services 
+        builder.Services.AddScoped<IUserService, UserService>();
+
+        builder.Services.AddScoped<ISmsService, SmsService>();
+
+
         #endregion
 
+
         // Add services to the container.
+        builder.Services.AddSingleton<VerificationCodeStore>();
+    
+      
 
         #region Make_connectionstring
 
@@ -58,6 +87,10 @@ public class Program
                     .LogTo(Console.WriteLine, LogLevel.Warning);
             }
         );
+
+        builder.Services
+             .AddIdentity<User, IdentityRole>()
+             .AddEntityFrameworkStores<ApplicationDbContext>();
 
         #endregion
 
