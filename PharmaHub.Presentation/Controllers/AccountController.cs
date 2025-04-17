@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PharmaHub.Domain.Entities.Identity;
+using PharmaHub.Domain.Enums;
 using PharmaHub.Presentation.ActionRequest.Account;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -23,6 +23,7 @@ namespace PharmaHub.Presentation.Controllers
             _config = config;
         }
 
+        #region Register User
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterUserActionRequest request)
         {
@@ -38,10 +39,10 @@ namespace PharmaHub.Presentation.Controllers
 
             var errors = result.Errors.Select(e => e.Description).ToArray();
             return BadRequest(errors);
-        }
+        } 
+        #endregion
 
-        // 🔁 Extracted mapping method
-    
+        #region RegisterPharmacy
         [HttpPost("pharmacyregister")]
         public async Task<IActionResult> RegisterPharmacy([FromBody] RegisterPharmacyActionRequest request)
         {
@@ -61,6 +62,28 @@ namespace PharmaHub.Presentation.Controllers
             var errors = result.Errors.Select(e => e.Description).ToList();
             return BadRequest(errors);
         }
+
+        [HttpPut("approve/{pharmacyId}")]
+        public async Task<IActionResult> ApprovePharmacy(string pharmacyId)
+        {
+            var pharmacy = await _userManager.FindByIdAsync(pharmacyId);
+            if (pharmacy == null || pharmacy is not Pharmacy)
+                return NotFound("Pharmacy not found.");
+
+            ((Pharmacy)pharmacy).AccountStat = AccountStats.Active;
+
+            var updateResult = await _userManager.UpdateAsync(pharmacy);
+            if (!updateResult.Succeeded)
+                return BadRequest(updateResult.Errors.Select(e => e.Description));
+
+            await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
+
+            return Ok("Pharmacy approved and role assigned.");
+        }
+
+        #endregion
+
+        #region Login
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginUserActionRequest request)
         {
@@ -121,8 +144,10 @@ namespace PharmaHub.Presentation.Controllers
             // User doesnot exist
             return Unauthorized();
         }
+        #endregion
 
-        // 🔁 Mapping method
+        #region Mapping method
+
         private Pharmacy MapToPharmacy(RegisterPharmacyActionRequest request)
         {
             return new Pharmacy
@@ -138,7 +163,7 @@ namespace PharmaHub.Presentation.Controllers
                 CreditCardNumber = request.CreditCardNumber,
                 OpenTime = request.OpenTime,
                 CloseTime = request.CloseTime,
-              
+
             };
         }
         private Customer MapToCustomer(RegisterUserActionRequest request)
@@ -151,7 +176,8 @@ namespace PharmaHub.Presentation.Controllers
                 Country = request.Country,
                 city = request.City
             };
-        }
+        } 
+        #endregion
     }
 
 }
