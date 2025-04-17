@@ -5,21 +5,6 @@ namespace PharmaHub.DTOs.Authentication;
 
 public class PharmacyDto
 {
-    public PharmacyDto(Pharmacy ph)
-    {
-        PharmacyName = ph.PharmacyName;
-        Email = ph.Email;
-        PhoneNumber = ph.PhoneNumber;
-        FormalPapersURL = ph.FormalPapersURL;
-        LogoURL = ph.LogoURL;
-        CreditCardNumber = ph.CreditCardNumber;
-        Country = ph.Country;
-        city = ph.city;
-        Address = ph.Address;
-        OpenTime = ph.OpenTime;
-        CloseTime = ph.CloseTime;
-        AccountStat = ph.AccountStat;
-    }
     public string PharmacyName { get; set; } = string.Empty;
     public AccountStats AccountStat { get; set; } = AccountStats.Pending; //Pending by default`
     public string Email { get; set; } = string.Empty;
@@ -31,7 +16,26 @@ public class PharmacyDto
     public string CreditCardNumber { get; set; }
     public CountriesSupported Country { get; set; } 
     public Governorates city { get; set; }
-    public string Address { get; set; }
     public byte OpenTime { get; set; } 
     public byte CloseTime { get; set; } 
+}
+public static class RegisterPharmacyDtoExtensions
+{
+    public static Pharmacy ToEntity(this PharmacyDto dto)
+        => new Pharmacy
+        {
+            UserName = dto.PharmacyName,
+            Email = dto.Email,
+            PhoneNumber = dto.PhoneNumber,
+            PasswordHash = dto.Password,
+            Country = dto.Country,
+            city = dto.city,
+            AccountStat = dto.AccountStat,
+            FormalPapersURL = dto.FormalPapersURL,
+            LogoURL = dto.LogoURL,
+            CreditCardNumber = dto.CreditCardNumber
+
+        };
+
+
 }
