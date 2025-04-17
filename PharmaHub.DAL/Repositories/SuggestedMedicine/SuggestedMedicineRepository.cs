@@ -12,12 +12,11 @@ public class SuggestedMedicineRepository : GenericRepository<SuggestedMedicine>,
     private readonly ApplicationDbContext _context;
     public SuggestedMedicineRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task AddSuggestedMedicineAsync(SuggestedMedicine newMed)
+    public async Task AddRangeSuggestedMedicineAsync(params SuggestedMedicine[] newMed)
     {
         if (newMed == null)
             throw new ArgumentNullException(nameof(newMed));
-
-        await _context.SuggestedMedicines.AddAsync(newMed);
+        await _context.SuggestedMedicines.AddRangeAsync(newMed);    
     }
 
     public async Task<IReadOnlyList<SuggestedMedicine>> GetSuggestedMedicineByName(string name)

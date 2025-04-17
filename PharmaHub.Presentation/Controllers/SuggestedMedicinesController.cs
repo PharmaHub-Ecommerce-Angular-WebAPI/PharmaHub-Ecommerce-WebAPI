@@ -20,8 +20,6 @@ namespace PharmaHub.Presentation.Controllers
             _openFdaService = openFdaService;
         }
 
-
-
         //// POST: api/suggestedmedicines
         //[HttpPost]
         //public async Task<IActionResult> AddSuggestedMedicine([FromBody] CreateSuggestedMedicineDto newMed)
@@ -38,38 +36,52 @@ namespace PharmaHub.Presentation.Controllers
         //    return NoContent();
         //}
 
-       
-        
-        
         [HttpGet("search")]
-        // GET: api/suggestedmedicines/search?name=paracetamol
         public async Task<IActionResult> SearchSuggestedMedicine([FromQuery] string name)
         {
+            // Validate the input
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("Name cannot be null or empty.");
+            }
+            // Search for suggested medicines in my database
             var results = await _suggestedManager.SearchSuggestedMedicineAsync(name);
+            // If no results found, search in OpenFDA
             if (results == null || !results.Any())
             {
-               var drugSuggestions=await  _openFdaService.SearchDrugOpenFDA(name);
+                // Search for suggested medicines in OpenFDA
+                var drugSuggestions = await _openFdaService.SearchDrugOpenFDA(name);
+                // If no suggestions found, return NotFound
                 if (drugSuggestions == null || !drugSuggestions.Any())
                 {
                     return NotFound("No suggested medicines found.");
                 }
-                foreach (var drug in drugSuggestions)
+
+                // Map the results to the DTO
+                var CreateSuggestedMedicineDto = drugSuggestions.Select(d => new CreateSuggestedMedicineDto
                 {
-                    var newMed = new GetSuggestedMedicineDto
+                    Id = Guid.NewGuid(), // Generate a new GUID for the ID
+                    Name = d.Name,
+                    Strength = (d.Strength >= short.MinValue && d.Strength <= short.MaxValue)
+                                                   ? Convert.ToInt16(d.Strength)
+                                                   : (short)0
+                }).ToArray();
+
+                // Add it in my database
+                await _suggestedManager.AddRangeSuggestedMedicineAsync(CreateSuggestedMedicineDto);
+
+                // After adding the new medicines in my database, Send the results
+                results = CreateSuggestedMedicineDto.Select(C=> 
+                    new GetSuggestedMedicineDto
                     {
-                        Id = Guid.NewGuid(), 
-                        Name = drug.Name,
-                        Strength= (drug.Strength >= short.MinValue && drug.Strength <= short.MaxValue)
-                                                    ? Convert.ToInt16(drug.Strength)
-                                                    : (short)0
-                    };
-                    await _suggestedManager.AddSuggestedMedicineAsync(newMed);//make add range for it to add the suggested medicines
-                }
+                        Id = C.Id,
+                        Name = C.Name,
+                        Strength = C.Strength
+                    } 
+                ).ToList();
+
             }
             return Ok(results);
         }
-
-
-
     }
 }

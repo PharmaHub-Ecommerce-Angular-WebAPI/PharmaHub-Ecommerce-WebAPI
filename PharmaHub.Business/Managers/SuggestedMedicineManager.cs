@@ -18,15 +18,17 @@ namespace PharmaHub.Business.Managers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task AddSuggestedMedicineAsync(CreateSuggestedMedicineDto newMed)
+        public async Task AddRangeSuggestedMedicineAsync(params CreateSuggestedMedicineDto [] newMed)
         {
             if (newMed == null)
                 throw new ArgumentNullException(nameof(newMed));
-            await _unitOfWork._suggestedMedicinesRepo.AddSuggestedMedicineAsync(new SuggestedMedicine
-            {
-                Name = newMed.Name,
-                Strength = newMed.Strength
-            });
+            await _unitOfWork._suggestedMedicinesRepo.AddRangeSuggestedMedicineAsync(
+                newMed.Select(m => new SuggestedMedicine
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    Strength = m.Strength
+                }).ToArray());
             await _unitOfWork.CompleteAsync();
         }
 
