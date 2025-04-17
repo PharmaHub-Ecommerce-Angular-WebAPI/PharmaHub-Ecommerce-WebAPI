@@ -1,7 +1,10 @@
 
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PharmaHub.Business.Contracts;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using PharmaHub.Business.Managers;
 using PharmaHub.DAL.Context;
 using PharmaHub.DAL.Repositories;
@@ -13,7 +16,7 @@ using PharmaHub.DALRepositories;
 using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Infrastructure;
-using PharmaHub.Service.Services;
+using PharmaHub.Service.JWT_Handler;
 
 namespace PharmaHub.Presentation;
 
@@ -112,6 +115,45 @@ public class Program
 
         #endregion
 
+        #region JWT_Configrations
+        /*
+         * 
+         * 
+         * 
+        // Identity with Roles
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+         * */
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateLifetime = true,
+
+                ValidateIssuer = true,
+                ValidIssuer= builder.Configuration["JwtSettings:Issuer"],
+
+                ValidateAudience = true,
+                ValidAudience = builder.Configuration["JwtSettings:Audience"],
+
+                ValidateIssuerSigningKey = true,
+
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+            };
+        });
+        builder.Services.AddAuthorization();
+        builder.Services.AddScoped(sp => new JwtTokenService(builder.Configuration["JwtSettings: Key"], builder.Configuration["JwtSettings:Issuer"], builder.Configuration["JwtSettings:Audience"], sp.GetRequiredService<UserManager<IdentityUser>>()));
+
+
+        #endregion
+
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -129,6 +171,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
 
