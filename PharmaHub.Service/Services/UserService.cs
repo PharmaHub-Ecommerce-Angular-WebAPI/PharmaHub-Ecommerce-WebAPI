@@ -58,7 +58,7 @@ public class UserService : IUserService
         var code = new Random().Next(100000, 999999).ToString();
         _codeStore.Store(user.Id, code);
 
-        var message = $"Your verification code is: {code}";
+        var message = $"Your PharmaHub verification code is: {code}";
         await _emailService.SendAsync(user.Email, "Verify Your Email", message);
         await _smsService.SendSmsAsync(user.PhoneNumber, message);
     }
