@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Presentation.ActionRequest.Account;
+using PharmaHub.Service.JWT_Handler;
 using PharmaHub.Service.UserHandler;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace PharmaHub.Presentation.Controllers
 {
@@ -19,12 +15,14 @@ namespace PharmaHub.Presentation.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _config;
         private readonly IFileService _fileService;
+        private readonly JwtTokenService _jwtService;
 
-        public AccountController(UserManager<User> userManager, IConfiguration config ,IFileService fileService)
+        public AccountController(UserManager<User> userManager, IConfiguration config, IFileService fileService, JwtTokenService jwtTokenService)
         {
             _userManager = userManager;
             _config = config;
             _fileService=fileService;
+            _jwtService=jwtTokenService;
         }
 
         #region Register User
@@ -43,7 +41,7 @@ namespace PharmaHub.Presentation.Controllers
 
             var errors = result.Errors.Select(e => e.Description).ToArray();
             return BadRequest(errors);
-        } 
+        }
         #endregion
 
         #region RegisterPharmacy
@@ -51,10 +49,10 @@ namespace PharmaHub.Presentation.Controllers
         public async Task<IActionResult> RegisterPharmacy([FromBody] RegisterPharmacyActionRequest request)
         {
             if (!ModelState.IsValid)
-             return BadRequest(ModelState);
-            
+                return BadRequest(ModelState);
+
             var uniqueFileName = _fileService.UploadFile(request.FormalPapersURL, "pdf");
-            var pharmacy = MapToPharmacy(request , uniqueFileName);
+            var pharmacy = MapToPharmacy(request, uniqueFileName);
 
             var result = await _userManager.CreateAsync(pharmacy, request.Password);
 
@@ -102,58 +100,25 @@ namespace PharmaHub.Presentation.Controllers
                 // Password Valid
                 if (isPasswordValid)
                 {
-                    // Create JWT Token
+                    // Generate token using JwtTokenService
+                    var token = await _jwtService.GenerateToken(user);
 
-                    var claims = new List<Claim>()
+                    return Ok(new
                     {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    };
-
-                    var roles = await _userManager.GetRolesAsync(user);
-
-                    foreach (string role in roles)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, role));
-                    }
-
-                    var secret = _config["Jwt:Secret"];
-                    SecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-                    SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                    // Signing Credentials = Secret + Algorithm
-
-                    // Create JWT Token
-
-                    JwtSecurityToken jwtToken = new JwtSecurityToken
-                    (
-                        issuer: _config["Jwt:Issuer"],
-                        audience: _config["Jwt:Audience"],
-                        claims: claims,
-                        expires: DateTime.Now.AddHours(3),
-                        signingCredentials: signingCredentials
-                    );
-
-                    return Ok
-                    (
-                        new
-                        {
-                            token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                            expiration = jwtToken.ValidTo
-                        }
-                    );
+                        token = token,
+                        message = "Login successful"
+                    });
                 }
             }
 
-            // User doesnot exist
-            return Unauthorized();
+            // User does not exist or invalid password
+            return Unauthorized(new { message = "Invalid username or password" });
         }
         #endregion
 
         #region Mapping method
 
-        private Pharmacy MapToPharmacy(RegisterPharmacyActionRequest request , string uniqueFileName)
+        private Pharmacy MapToPharmacy(RegisterPharmacyActionRequest request, string uniqueFileName)
         {
             return new Pharmacy
             {
@@ -181,7 +146,7 @@ namespace PharmaHub.Presentation.Controllers
                 Country = request.Country,
                 city = request.City
             };
-        } 
+        }
         #endregion
     }
 
