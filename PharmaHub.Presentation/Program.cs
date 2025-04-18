@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using NETCore.MailKit.Extensions;
 using PharmaHub.Business.Contracts;
 using PharmaHub.Business.Managers;
 using PharmaHub.DAL.Context;
@@ -98,16 +99,12 @@ public class Program
             }
         );
 
-        builder.Services
-             .AddIdentity<User, IdentityRole>()
-             .AddEntityFrameworkStores<ApplicationDbContext>();
-
         #endregion
 
 
         #region Configration_identity
 
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<User, IdentityRole>(options =>
         {
             options.Password.RequireDigit = true;
             //options.Password.RequiredLength = 6;
@@ -166,6 +163,21 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddMailKit(config =>
+        {
+            config.UseMailKit(new NETCore.MailKit.Infrastructure.Internal.MailKitOptions()
+            {
+                Server = "smtp.yourserver.com",
+                Port = 587,
+                SenderName = "Your App Name",
+                SenderEmail = "your@email.com",
+                Account = "your@email.com",
+                Password = "yourpassword",
+                Security = true
+            });
+        });
+
 
         var app = builder.Build();
 
