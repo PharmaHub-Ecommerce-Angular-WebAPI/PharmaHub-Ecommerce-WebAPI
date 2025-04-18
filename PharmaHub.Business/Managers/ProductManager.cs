@@ -29,9 +29,9 @@ namespace PharmaHub.Business.Managers
         #region HomePage
 
         //  GET /api/products/featured-by-type
-        public async Task<IReadOnlyList<GetProductDto>> GetProducts(int page, int size, int maxPrice, bool Offer, string pharmacyId, params ProductCategory[] categories)
+        public async Task<IReadOnlyList<GetProductDto>> GetProducts(int page, int size, int maxPrice, bool Offer, string pharmacyId, Governorates city, params ProductCategory[] categories)
         {
-            var products = await _unitOfWork._productsRepo.GetLatestProductsAsync(page, size, maxPrice, Offer, pharmacyId, categories);
+            var products = await _unitOfWork._productsRepo.GetLatestProductsAsync(page, size, maxPrice, Offer, pharmacyId, city, categories);
 
             var productDtos = await Task.WhenAll(products.Select(async p =>
             {

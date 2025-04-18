@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PharmaHub.DAL.Context;
 using PharmaHub.DAL.Repositories.GenericRepositoryl;
 using PharmaHub.Domain.Entities;
+using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Domain.Infrastructure;
 
@@ -48,6 +50,7 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     int maxPrice,
     bool offer,
     string pharmacyId,
+    Governorates city,
     params ProductCategory[] categories)
     {
         var result = new List<Product>();
@@ -67,6 +70,11 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
             query = offer
                 ? query.Where(p => p.DiscountRate > 0)
                 : query.Where(p => p.DiscountRate == 0);
+
+            
+               
+             query = query.Where(p => p.Pharmacy.city == city);
+            
 
             var categoryProducts = await query
                 .OrderByDescending(p => p.CreatedAt)

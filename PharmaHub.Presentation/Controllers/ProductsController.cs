@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PharmaHub.Business.Contracts;
 using PharmaHub.Domain.Enums;
 using PharmaHub.DTOs.ProductDTOs;
+using PharmaHub.Presentation.ActionRequest.Product;
 
 namespace PharmaHub.Presentation.Controllers
 {
@@ -27,9 +28,13 @@ namespace PharmaHub.Presentation.Controllers
             int maxPrice = int.MaxValue,
             bool offer = false,
             string pharmacyId = null,
+            string city = "Cairo",
             [FromQuery] ProductCategory[] categories = null)
         {
-            var products = await _productManager.GetProducts(page, size, maxPrice, offer, pharmacyId, categories);
+            
+            var enumCity=(Governorates)Enum.Parse(typeof(Governorates), city);
+
+            var products = await _productManager.GetProducts(page, size, maxPrice, offer, pharmacyId, enumCity,categories);
             if (products == null || !products.Any())
             {
                 return NotFound("No products found.");
@@ -68,9 +73,10 @@ namespace PharmaHub.Presentation.Controllers
 
         // POST: api/products
         [HttpPost]
-        public async Task<IActionResult> AddProduct([FromBody] AddProductDto product)
+        public async Task<IActionResult> AddProduct([FromBody] CreateProductActionRequest product)
         {
-            await _productManager.AddProductAsync(product);
+           
+            await _productManager.AddProductAsync(product.ToDto());
             return Ok (); 
             // return CreatedAtAction(nameof(SearchProducts), new { name = product.Name }, product);
         }
