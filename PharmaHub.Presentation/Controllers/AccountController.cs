@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Presentation.ActionRequest.Account;
@@ -16,14 +17,41 @@ namespace PharmaHub.Presentation.Controllers
         private readonly IConfiguration _config;
         private readonly IFileService _fileService;
         private readonly JwtTokenService _jwtService;
+        private readonly ISmsService _smsService;
+        private static readonly Dictionary<string, string> _phoneVerificationCodes = new Dictionary<string, string>();
 
-        public AccountController(UserManager<User> userManager, IConfiguration config, IFileService fileService, JwtTokenService jwtTokenService)
+        public AccountController(
+            UserManager<User> userManager, 
+            IConfiguration config,
+            IFileService fileService, 
+            JwtTokenService jwtTokenService,
+            ISmsService smsService
+            )
         {
             _userManager = userManager;
             _config = config;
             _fileService=fileService;
             _jwtService=jwtTokenService;
+            _smsService = smsService;
         }
+        #region Phone Verification
+
+        [HttpPost("send-code")]
+        public async Task<IActionResult> SendVerificationCode([FromBody] PhoneVerificationRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+                return BadRequest("Phone number is required.");
+
+            // Check if phone already registered
+            var existingUser = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            if (existingUser != null)
+                return BadRequest("This phone number is already registered.");
+
+            await _smsService.SendVerificationCodeAsync(request.PhoneNumber);
+            return Ok("Verification code sent.");
+        } 
+        #endregion
+
 
         #region Register User
         [HttpPost("register")]
@@ -32,13 +60,34 @@ namespace PharmaHub.Presentation.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Check phone not already in use
+            var existingUserWithPhone = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            if (existingUserWithPhone != null)
+                return BadRequest(new { Message = "This phone number is already registered." });
+
+            // Check if email already exists
+            var existingUserWithEmail = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUserWithEmail != null)
+            {
+                return BadRequest("Email is already registered.");
+            }
+
+            // ✅ Verify phone code
+            var isCodeValid = _smsService.VerifyPhoneCode(request.PhoneNumber, request.VerificationCode);
+            if (!isCodeValid)
+                return BadRequest("Invalid or expired verification code.");
+
             var user = MapToCustomer(request);
 
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (result.Succeeded)
+            {
+                // Clean up verification code after successful registration
+                _phoneVerificationCodes.Remove(request.PhoneNumber);
                 return Ok("Account Registered");
-
+            }
             var errors = result.Errors.Select(e => e.Description).ToArray();
             return BadRequest(errors);
         }
@@ -149,7 +198,9 @@ namespace PharmaHub.Presentation.Controllers
             };
         }
         #endregion
+
     }
+
 
 }
 

@@ -80,7 +80,6 @@ public class Program
 
         #endregion
 
-
         // Add services to the container.
         builder.Services.AddSingleton<VerificationCodeStore>();
 
@@ -187,6 +186,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 Security = true
             });
         });
+        //builder.Configuration
+        //                .SetBasePath(Directory.GetCurrentDirectory())
+        //                .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
+        //                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+        //                .AddEnvironmentVariables();
+
+
 
 
         var app = builder.Build();
