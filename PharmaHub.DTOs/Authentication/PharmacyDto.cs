@@ -17,7 +17,8 @@ public class PharmacyDto
     public CountriesSupported Country { get; set; } 
     public Governorates city { get; set; }
     public byte OpenTime { get; set; } 
-    public byte CloseTime { get; set; } 
+    public byte CloseTime { get; set; }
+    public string Address { get; set; } = string.Empty;
 }
 public static class RegisterPharmacyDtoExtensions
 {
@@ -33,7 +34,10 @@ public static class RegisterPharmacyDtoExtensions
             AccountStat = dto.AccountStat,
             FormalPapersURL = dto.FormalPapersURL,
             LogoURL = dto.LogoURL,
-            CreditCardNumber = dto.CreditCardNumber
+            CreditCardNumber = dto.CreditCardNumber ,
+            OpenTime = dto.OpenTime,
+            CloseTime = dto.CloseTime,
+            Address = dto.Address
 
         };
 

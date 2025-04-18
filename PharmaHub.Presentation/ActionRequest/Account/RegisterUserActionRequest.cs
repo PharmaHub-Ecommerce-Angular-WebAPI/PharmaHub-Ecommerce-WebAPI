@@ -29,6 +29,9 @@ public class RegisterUserActionRequest : IValidatableObject
     [DataType(DataType.Password)]
     [Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; }
+    [Required(ErrorMessage = "Address is required.")]
+    [StringLength(200, MinimumLength = 5, ErrorMessage = "Address must be between 5 and 200 characters.")]
+    public string Address { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Country is required.")]
     [EnumDataType(typeof(CountriesSupported), ErrorMessage = "Invalid country selection.")]
@@ -39,12 +42,25 @@ public class RegisterUserActionRequest : IValidatableObject
     public Governorates City { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        if (Country == default)
+    {  
+        // For country validation
+        if (Country == 0) // default value for enum
+        {
             yield return new ValidationResult("Country must be selected.", new[] { nameof(Country) });
-
-        if (City == default)
+        }
+        else if (!Enum.IsDefined(typeof(CountriesSupported), Country))
+        {
+            yield return new ValidationResult("Invalid country selection.", new[] { nameof(Country) });
+        }
+        if (string.IsNullOrWhiteSpace(City.ToString()))
+        {
             yield return new ValidationResult("City must be selected.", new[] { nameof(City) });
+        }
+        else if (!Enum.IsDefined(typeof(Governorates), City))
+        {
+            yield return new ValidationResult("Invalid city selection.", new[] { nameof(City) });
+        }
+
     }
 }
 

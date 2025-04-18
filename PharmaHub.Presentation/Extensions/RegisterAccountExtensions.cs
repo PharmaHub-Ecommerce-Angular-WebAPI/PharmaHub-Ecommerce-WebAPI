@@ -13,7 +13,8 @@ public static class RegisterAccountExtensions
               ConfirmPassword = newAccount.ConfirmPassword,
               city = newAccount.City,
               Country = newAccount.Country,
-              PhoneNumber = newAccount.PhoneNumber
+              PhoneNumber = newAccount.PhoneNumber,
+              Address = newAccount.Address,
           };
     public static PharmacyDto ToDtoPharmacy(this RegisterPharmacyActionRequest newAccount ,string uniqueFileName)
         => new PharmacyDto
@@ -29,7 +30,8 @@ public static class RegisterAccountExtensions
             CreditCardNumber = newAccount.CreditCardNumber,
             AccountStat =newAccount.AccountStat,
             Country = newAccount.Country,
-            PhoneNumber = newAccount.PhoneNumber
+            PhoneNumber = newAccount.PhoneNumber,
+            Address = newAccount.Address,
         };
 
 }

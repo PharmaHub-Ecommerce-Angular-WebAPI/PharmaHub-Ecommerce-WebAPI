@@ -27,7 +27,7 @@ namespace PharmaHub.Presentation.Controllers
 
         #region Register User
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromForm] RegisterUserActionRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -144,7 +144,8 @@ namespace PharmaHub.Presentation.Controllers
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 Country = request.Country,
-                city = request.City
+                city = request.City,
+                Address =request.Address
             };
         }
         #endregion

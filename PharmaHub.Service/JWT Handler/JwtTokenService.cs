@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using PharmaHub.Domain.Entities.Identity;
 
 namespace PharmaHub.Service.JWT_Handler
 {
@@ -15,9 +16,9 @@ namespace PharmaHub.Service.JWT_Handler
         private readonly string _key;
         private readonly string _issuer;
         private readonly string _audience;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public JwtTokenService(string key, string issuer, string audience, UserManager<IdentityUser> userManager)
+        public JwtTokenService(string key, string issuer, string audience, UserManager<User> userManager)
         {
             _key = key;
             _issuer = issuer;
@@ -25,7 +26,7 @@ namespace PharmaHub.Service.JWT_Handler
             _userManager = userManager;
         }
 
-        public async Task<string> GenerateToken(IdentityUser user)
+        public async Task<string> GenerateToken(User user)
         {
             var roles = await _userManager.GetRolesAsync(user);
 

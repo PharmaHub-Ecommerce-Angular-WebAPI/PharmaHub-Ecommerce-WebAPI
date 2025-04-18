@@ -11,6 +11,7 @@ public class CustomerDto
     public string ConfirmPassword { get; set; }
     public CountriesSupported Country { get; set; }
     public Governorates city { get; set; }
+    public string Address { get; set; } = string.Empty;
 }
 public static class RegisterUserDtoExtensions
 {
@@ -23,6 +24,7 @@ public static class RegisterUserDtoExtensions
             PasswordHash = dto.Password,
             Country = dto.Country,
             city = dto.city,
+            Address = dto.Address,
         };
   
 

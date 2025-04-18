@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -119,6 +120,15 @@ public class Program
 
         #endregion
 
+        #region Configuration Json For accept enum names as strings
+        builder.Services.AddControllers()
+                              .AddJsonOptions(options =>
+                              {
+                                  options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                              });
+
+        #endregion
+
         #region JWT_Configrations
         /*
          * 
@@ -153,7 +163,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
             };
         });
         builder.Services.AddAuthorization();
-        builder.Services.AddScoped(sp => new JwtTokenService(builder.Configuration["JwtSettings: Key"], builder.Configuration["JwtSettings:Issuer"], builder.Configuration["JwtSettings:Audience"], sp.GetRequiredService<UserManager<IdentityUser>>()));
+        builder.Services.AddScoped(sp => new JwtTokenService(builder.Configuration["JwtSettings: Key"], builder.Configuration["JwtSettings:Issuer"], builder.Configuration["JwtSettings:Audience"], sp.GetRequiredService<UserManager<User>>()));
 
 
         #endregion
