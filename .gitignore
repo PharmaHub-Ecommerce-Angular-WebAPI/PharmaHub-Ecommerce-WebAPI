@@ -361,6 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/PharmaHub.Presentation/appsettings.Development.json
 /PharmaHub.DAL/Migrations/ApplicationDbContextModelSnapshot.cs
 *.cs
