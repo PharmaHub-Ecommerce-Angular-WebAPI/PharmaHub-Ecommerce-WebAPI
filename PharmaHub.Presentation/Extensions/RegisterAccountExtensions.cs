@@ -15,7 +15,7 @@ public static class RegisterAccountExtensions
               Country = newAccount.Country,
               PhoneNumber = newAccount.PhoneNumber
           };
-    public static PharmacyDto ToDtoPharmacy(this RegisterPharmacyActionRequest newAccount)
+    public static PharmacyDto ToDtoPharmacy(this RegisterPharmacyActionRequest newAccount ,string uniqueFileName)
         => new PharmacyDto
         {
             PharmacyName = newAccount.PharmacyName,
@@ -24,7 +24,7 @@ public static class RegisterAccountExtensions
             city = newAccount.city,
             OpenTime = newAccount.OpenTime,
             CloseTime = newAccount.CloseTime,
-            FormalPapersURL = newAccount.FormalPapersURL,
+            FormalPapersURL = uniqueFileName,
             LogoURL = newAccount.LogoURL,
             CreditCardNumber = newAccount.CreditCardNumber,
             AccountStat =newAccount.AccountStat,
