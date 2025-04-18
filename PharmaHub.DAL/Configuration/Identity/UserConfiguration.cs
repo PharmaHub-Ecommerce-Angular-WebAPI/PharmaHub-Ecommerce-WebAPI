@@ -31,9 +31,6 @@ namespace PharmaHub.DAL.Configuration.Identity
                 .HasColumnType("TINYINT") 
                 .HasDefaultValue(100); // Each account Stats will have a max trust score of 100
 
-            builder.HasIndex(u => u.PhoneNumber)
-               .IsUnique();
-
         }
 
     }

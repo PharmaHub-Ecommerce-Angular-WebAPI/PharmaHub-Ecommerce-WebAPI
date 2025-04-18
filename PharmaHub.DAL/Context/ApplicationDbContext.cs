@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PharmaHub.Domain.Entities;
@@ -37,6 +38,65 @@ namespace PharmaHub.DAL.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+
+            //Seeds Roles 
+
+            var adminRoleId = Guid.NewGuid().ToString();
+            modelBuilder.Entity<IdentityRole>().HasData(
+               new IdentityRole
+               {
+                   Id = Guid.NewGuid().ToString(), 
+                   Name = "Customer",
+                   NormalizedName = "CUSTOMER"
+               },
+               new IdentityRole
+               {
+                   Id = Guid.NewGuid().ToString(), 
+                   Name = "Pharmacy",
+                   NormalizedName = "PHARMACY"
+               },
+               new IdentityRole
+               {
+                   Id = adminRoleId, 
+                   Name = "Admin",
+                   NormalizedName = "ADMIN"
+               }
+            );
+
+
+            // Seeds Admin User
+
+            var hasher = new PasswordHasher<User>();
+            var adminEmail = "admin@example.com";
+            var adminId = Guid.NewGuid().ToString();
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = adminId,
+                    UserName = adminEmail,
+                    NormalizedUserName = adminEmail.ToUpper(),
+                    Email = adminEmail,
+                    NormalizedEmail = adminEmail.ToUpper(),
+                    EmailConfirmed = true,
+                    PasswordHash = "AQAAAAIAAYagAAAAEFnupFy23xRw9iVXAg5GjG/XYytPSD0EnHT4OLSctd+IC/rDBqUPFPbBLyEztH7fwg==", //Hash for Admin@12345
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    Address = "Admin HQ",
+                    PhoneNumber = "+200000000000"
+                }
+            );
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    UserId = adminId,
+                    RoleId = adminRoleId
+                }
+            );
+
+
+
+
         }
 
     }
