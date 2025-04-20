@@ -22,7 +22,7 @@ namespace PharmaHub.Service.PhotoHandler
             using var stream = file.OpenReadStream();
             var uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(file.FileName, stream),
+                File = new FileDescription($"{Guid.NewGuid().ToString()}_{file.FileName}", stream),
                 Folder = "uploads"
             };
 

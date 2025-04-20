@@ -60,9 +60,10 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
         foreach (var category in categories)
         {
             var query = _dbSet
-                .AsNoTracking();
-                // .Where(p => p.Category == category );
+                .AsNoTracking()
+                 .Where(p => p.Category == category);
             // .Where(p => p.Category == category && p.Quantity > 0);
+
 
             if (maxPrice > 0)
                 query = query.Where(p => p.Price <= maxPrice);
@@ -84,10 +85,10 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
                 .Skip((page - 1) * sizePerCategory)
                 .Take(sizePerCategory)
                 .ToListAsync();
-          var x= categoryProducts.Where(p => p.Category == category && p.Quantity > 0);
+          // var x= categoryProducts.Where(p => p.Category == category && p.Quantity > 0);
 
             // Add the products of the current category to the result list
-            result.AddRange(x);
+            result.AddRange(categoryProducts);
         }
         return result;
     }

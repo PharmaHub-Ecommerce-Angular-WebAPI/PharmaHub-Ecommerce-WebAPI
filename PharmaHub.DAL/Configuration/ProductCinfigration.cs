@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PharmaHub.Domain.Entities;
+using PharmaHub.Domain.Enums;
 
 namespace PharmaHub.DAL.Configuration
 {
@@ -62,7 +63,9 @@ namespace PharmaHub.DAL.Configuration
                 .HasDatabaseName("IX_Product_Category"); // Index on Category
             builder.Property(p => p.Category)
                 .IsRequired()
-                .HasConversion<string>(); // ProductCategory is an enum, convert it to string for storage
+                 .HasConversion(
+                  v => v.ToString(), // write: enum -> string
+                  v => (ProductCategory)Enum.Parse(typeof(ProductCategory), v)); // read: string -> enum; // ProductCategory is an enum, convert it to string for storage
 
 
             ///////// Configure relationships
