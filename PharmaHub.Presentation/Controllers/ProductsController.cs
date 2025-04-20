@@ -53,6 +53,16 @@ namespace PharmaHub.Presentation.Controllers
             return Ok(products);
         }
 
+        // PUT: api/products/Pharmacy/Analysis/{id}
+        [HttpGet("Pharmacy/Analysis/{id}")]
+        public async Task<IActionResult> GetPharmacyAnalysisResult(string id)
+        {
+            var Result = await _productManager.GetPharmacyAnalisis(id);
+
+            return Ok(Result);
+        }
+
+
         // GET: api/products/mini-search?name=panadol
         [HttpGet("mini-search")]
         public async Task<IActionResult> SearchProducts([FromQuery] string name)
