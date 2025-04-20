@@ -35,10 +35,16 @@ namespace PharmaHub.Business.Managers
 
             var productDtos = await Task.WhenAll(products.Select(async p =>
             {
-                var packageComponents = p.Category == ProductCategory.Package
-                    ? await _unitOfWork._PackagesComponentRepo.GetPackagesComponentsByProductIdAsync(p.Id)
-                    : new List<string>();
 
+                // Get the package components if the product is a package
+                var packageComponents = new List<string>();
+                if (p.Category == ProductCategory.Package)
+                {
+                     packageComponents = p.PackagesComponents
+                         .Select(pc => pc.ComponentName).ToList();
+                }
+
+                // Map the product to GetProductDto
                 return new GetProductDto
                 (
                     p.Id,
@@ -49,7 +55,10 @@ namespace PharmaHub.Business.Managers
                     p.Category,
                     p.DiscountRate,
                     p.Strength,
-                    packageComponents
+                    packageComponents,
+                    p.PharmacyId,
+                    p.Pharmacy.UserName,
+                    p.Pharmacy.LogoURL
                 );
             }));
 
@@ -124,7 +133,59 @@ namespace PharmaHub.Business.Managers
         public async Task<IReadOnlyList<GetProductDto>> ProductsSearch(string name)
         {
             var products = await _unitOfWork._productsRepo.GetProductsByNameAsync(name);
+
+            // If no products found, return an empty list
+            if (products == null || !products.Any())
+            {
+                return new List<GetProductDto>();
+            }
+
+            // Get the package components if the product is a package
+            var packageComponents = new List<string>();
+            
+
+            // Map the products to GetProductDto
             return products.Select(p => new GetProductDto
+            (
+
+                p.Id,
+                p.Name,
+                p.Description,
+                p.ImageUrl,
+                p.Price,
+                p.Category,
+                p.DiscountRate,
+                p.Strength,
+                p.PackagesComponents.Select(p => p.ComponentName).ToList(),
+                p.PharmacyId,
+                p.Pharmacy.UserName,
+                p.Pharmacy.LogoURL
+
+            )).ToList();
+        }
+
+        public async Task<List<GetProductDto>?> ProductFuzzySearch(string name)
+        {
+
+            // If no products found, perform fuzzy search
+            // Get all products from the database and make them List for fuzzy search 
+            var listProducts = (await _unitOfWork._productsRepo.GetAllAsync()).ToList();
+
+            // Get all product names from the list of products
+            var productNames = listProducts.Select(p => p.Name).ToList();
+
+            var matches = Process.ExtractAll(name, productNames)
+                .OrderByDescending(m => m.Score)
+                .Take(5)
+                .ToList();
+
+            // Get the Products of the matched products
+            var matchedProducts = matches
+                .Select(m => listProducts.First(p => p.Name == m.Value))
+                .ToList();
+
+            // Map the matched products to GetProductDto
+            var productDtos = matchedProducts.Select(p => new GetProductDto
             (
                 p.Id,
                 p.Name,
@@ -134,51 +195,20 @@ namespace PharmaHub.Business.Managers
                 p.Category,
                 p.DiscountRate,
                 p.Strength,
-                new List<string>()
+                new List<string>(),
+                p.PharmacyId,
+                p.Pharmacy.UserName,
+                p.Pharmacy.LogoURL
             )).ToList();
-        }
 
-        public async Task<List<GetProductDto>?> ProductFuzzySearch(string name)
-        {
-            
-                // If no products found, perform fuzzy search
-                // Get all products from the database and make them List for fuzzy search 
-                var listProducts = (await _unitOfWork._productsRepo.GetAllAsync()).ToList();
-
-                // Get all product names from the list of products
-                var productNames = listProducts.Select(p => p.Name).ToList();
-                
-                var matches = Process.ExtractAll(name, productNames)
-                    .OrderByDescending(m => m.Score)
-                    .Take(5)
-                    .ToList();
-
-                // Get the Products of the matched products
-                var matchedProducts = matches
-                    .Select(m => listProducts.First(p => p.Name == m.Value))
-                    .ToList();
-
-                // Map the matched products to GetProductDto
-                var productDtos = matchedProducts.Select(p => new GetProductDto
-                (
-                    p.Id,
-                    p.Name,
-                    p.Description,
-                    p.ImageUrl,
-                    p.Price,
-                    p.Category,
-                    p.DiscountRate,
-                    p.Strength,
-                    new List<string>()
-                )).ToList();
-
-                return productDtos;
+            return productDtos;
         }
 
         #endregion
 
 
         #region pharmacy owner
+        
         public async Task<ProblemDetails?> DeleteProduct(Guid productId) 
         {
             await _unitOfWork._productsRepo.DeleteAsync(productId);
@@ -202,7 +232,10 @@ namespace PharmaHub.Business.Managers
             return null;
         }
 
-
+        public async Task<PharmacyProductStats> GetPharmacyAnalisis(string pharmacyId)
+        {
+            return await _unitOfWork._productsRepo.GetPharmacyAnalisisAsync(pharmacyId);
+        }
 
         #endregion
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 
 namespace PharmaHub.DTOs.ProductDTOs
@@ -18,8 +19,11 @@ namespace PharmaHub.DTOs.ProductDTOs
         public byte DiscountRate { get; set; }
         public short? Strength { get; set; } = default;
         public ICollection<string>? PackageComponents { get; set; } = new List<string>();
+        public string? PharmacyId { get; set; } = string.Empty;
+        public string? PharmacyName { get; set; } = string.Empty;
+        public string? PharmacyLogo { get; set; } = string.Empty;
 
-       public GetProductDto(Guid id, string name, string description, string? imageUrl, decimal price, ProductCategory category, byte discountRate, short? strength, ICollection<string>? packageComponents)
+        public GetProductDto(Guid id, string name, string description, string? imageUrl, decimal price, ProductCategory category, byte discountRate, short? strength, ICollection<string>? packageComponents,string? pharmacyId, string? pharmacyName,string? pharmacyLogo)
         {
             Id = id;
             Name = name;
@@ -30,6 +34,9 @@ namespace PharmaHub.DTOs.ProductDTOs
             DiscountRate = discountRate;
             Strength = strength;
             PackageComponents = packageComponents;
+            PharmacyId = pharmacyId;
+            PharmacyName = pharmacyName;
+            PharmacyLogo = pharmacyLogo;
         }
     }
 }

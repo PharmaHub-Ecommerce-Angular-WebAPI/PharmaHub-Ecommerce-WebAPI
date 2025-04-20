@@ -1,6 +1,7 @@
 ﻿using PharmaHub.DAL.Repositories.GenericRepository;
 using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Enums;
+using PharmaHub.Domain.Objects;
 
 namespace PharmaHub.Domain.Infrastructure;
 
@@ -15,5 +16,6 @@ public Task<List<string>> GetRelatedComponents(Guid productId);
 public Task<int> DeleteProductAsync(Guid id);
 public Task<IReadOnlyList<Product>> GetProductsByNameAsync(string name);
 public Task<IReadOnlyList<Product>> GetProductsByPriceRangeAsync(decimal minPrice, decimal maxPrice);
+    public Task<PharmacyProductStats> GetPharmacyAnalisisAsync(string pharmacyId);
 
 }

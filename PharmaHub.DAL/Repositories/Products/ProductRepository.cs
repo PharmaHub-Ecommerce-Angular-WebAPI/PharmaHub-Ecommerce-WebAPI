@@ -6,6 +6,7 @@ using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Domain.Infrastructure;
+using PharmaHub.Domain.Objects;
 
 namespace PharmaHub.DAL.Repositories;
 
@@ -13,37 +14,12 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
 {
     public ProductRepository(ApplicationDbContext context) : base(context) { }
 
-    // View products paginated and ordered by latest For home page
-    //public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(int page, int size, int maxPrice, bool Offer,string pharmacyId , params ProductCategory[] categories)
-    //{
-    //    var query = _dbSet
-    //        .AsNoTracking()
-    //        .Where(p => categories.Contains(p.Category) && p.Quantity > 0);
-
-    //        if (maxPrice > 0)
-    //        {
-    //        query = query.Where(p => p.Price <= maxPrice);
-    //        }
-    //        if(!string.IsNullOrEmpty(pharmacyId))
-    //         {
-    //        query = query.Where(p => p.PharmacyId == pharmacyId);
-    //    }
-    //        if (Offer)
-    //        {
-    //        query = query.Where(p => p.DiscountRate > 0);
-    //        }
-    //        else
-    //        {
-    //        query = query.Where(p => p.DiscountRate == 0);
-    //        }
-
-    //    query = query
-    //        .OrderByDescending(p => p.CreatedAt)
-    //        .Skip((page - 1) * size)
-    //        .Take(size);
-    //    return await query.ToListAsync();
-    //}
-
+    /*
+     * 1 - Get all the data from specific pharmacy Or random.
+     * 2 - Get the product that have offer or have not .
+     * 3 - Get the Product by the Products in the city
+     * 
+     */
     public async Task<IReadOnlyList<Product>> GetLatestProductsAsync(
     int page,
     int sizePerCategory,
@@ -61,8 +37,10 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
         {
             var query = _dbSet
                 .AsNoTracking()
-                 .Where(p => p.Category == category);
-            // .Where(p => p.Category == category && p.Quantity > 0);
+                .Include(p => p.Pharmacy)
+                .Include(p => p.PackagesComponents)
+                .Where(p => p.Category == category && p.Quantity > 0);
+            
 
 
             if (maxPrice > 0)
@@ -76,8 +54,7 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
                 : query.Where(p => p.DiscountRate == 0);
 
 
-
-             //query = query.Where(p => p.Pharmacy.city == city); 
+             query = query.Where(p => p.Pharmacy.city == city); 
 
 
             var categoryProducts = await query
@@ -85,9 +62,9 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
                 .Skip((page - 1) * sizePerCategory)
                 .Take(sizePerCategory)
                 .ToListAsync();
-          // var x= categoryProducts.Where(p => p.Category == category && p.Quantity > 0);
 
             // Add the products of the current category to the result list
+
             result.AddRange(categoryProducts);
         }
         return result;
@@ -154,6 +131,8 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         return await _dbSet
             .AsNoTracking()
+            .Include(p => p.Pharmacy)
+            .Include(p => p.PackagesComponents)
             .Where(p => EF.Functions.Like(p.Name, $"%{name}%"))
             .ToListAsync();
     }
@@ -174,5 +153,24 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         var totalProducts = await _dbSet.CountAsync();
         return (int)Math.Ceiling((double)totalProducts / pageSize);
+    }
+
+    public async Task<PharmacyProductStats> GetPharmacyAnalisisAsync(string pharmacyId)
+    {
+
+        // Total number of products in this pharmacy
+        var totalProductsCount = await _dbSet
+            .AsNoTracking()
+            .CountAsync(p => p.PharmacyId == pharmacyId);
+
+        // Number of products that have been favorited by any customer
+        var favoritedProductsCount = await _dbSet
+            .AsNoTracking()
+            .Include(f=>f.FavoriteProductsList)
+            .Where(p => p.PharmacyId == pharmacyId && p.FavoriteProductsList.Any())
+            .CountAsync();
+
+        // Return the counts as a list
+        return new PharmacyProductStats { TotalProducts =totalProductsCount, FavoritedProducts = favoritedProductsCount };
     }
 }
