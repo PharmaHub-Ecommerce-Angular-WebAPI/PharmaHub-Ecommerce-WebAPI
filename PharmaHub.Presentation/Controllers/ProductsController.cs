@@ -31,7 +31,6 @@ namespace PharmaHub.Presentation.Controllers
             string city = "Cairo",
             [FromQuery] ProductCategory[] categories = null)
         {
-            
             var enumCity=(Governorates)Enum.Parse(typeof(Governorates), city);
 
             var products = await _productManager.GetProducts(page, size, maxPrice, offer, pharmacyId, enumCity,categories);
@@ -42,6 +41,17 @@ namespace PharmaHub.Presentation.Controllers
             return Ok(products);
         }
 
+        // PUT: api/products/Pharmacy/{id}
+        [HttpGet("Pharmacy/{id}")]
+        public async Task<IActionResult> GetProductsByPharmacyId(string id)
+        {
+            var products = await _productManager.GetProductsByPharmacyIdAsync(id);
+            if (products == null || !products.Any())
+            {
+                return NotFound("No products found.");
+            }
+            return Ok(products);
+        }
 
         // GET: api/products/mini-search?name=panadol
         [HttpGet("mini-search")]

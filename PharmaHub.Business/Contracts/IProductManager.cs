@@ -13,6 +13,7 @@ namespace PharmaHub.Business.Contracts
     public interface IProductManager
     {
         public Task<IReadOnlyList<GetProductDto>> GetProducts(int page, int size, int maxPrice, bool Offer, string pharmacyId, Governorates city, params ProductCategory[] categories);
+        public Task<IReadOnlyList<Product>> GetProductsByPharmacyIdAsync(string pharmacyId);
         public Task AddProductAsync(AddProductDto product);
         public Task<ProblemDetails?> PurchasingProduct(Guid productId, short quantity = 1);
         public Task<IReadOnlyList<GetProductDto>> ProductsSearch(string name);

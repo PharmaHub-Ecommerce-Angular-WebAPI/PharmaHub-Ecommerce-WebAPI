@@ -54,12 +54,15 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     params ProductCategory[] categories)
     {
         var result = new List<Product>();
+        if (categories == null || categories.Length == 0)
+            return new List<Product>();
 
         foreach (var category in categories)
         {
             var query = _dbSet
-                .AsNoTracking()
-                .Where(p => p.Category == category && p.Quantity > 0);
+                .AsNoTracking();
+                // .Where(p => p.Category == category );
+            // .Where(p => p.Category == category && p.Quantity > 0);
 
             if (maxPrice > 0)
                 query = query.Where(p => p.Price <= maxPrice);
@@ -71,28 +74,41 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
                 ? query.Where(p => p.DiscountRate > 0)
                 : query.Where(p => p.DiscountRate == 0);
 
-            
-               
-             query = query.Where(p => p.Pharmacy.city == city);
-            
+
+
+             //query = query.Where(p => p.Pharmacy.city == city); 
+
 
             var categoryProducts = await query
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * sizePerCategory)
                 .Take(sizePerCategory)
                 .ToListAsync();
+          var x= categoryProducts.Where(p => p.Category == category && p.Quantity > 0);
 
-            result.AddRange(categoryProducts);
+            // Add the products of the current category to the result list
+            result.AddRange(x);
         }
-
         return result;
     }
+
+    public async Task<IReadOnlyList<Product>> GetProductsByPharmacyIdAsync(string pharmacyId)
+    {
+        var products = await _dbSet
+            .AsNoTracking()
+            .Where(p => p.PharmacyId == pharmacyId)
+            .ToListAsync();
+        return products;
+
+    }
+
+
 
     public async Task<IReadOnlyList<Product>> GetRangeProductsByIdsAsync(List<Guid> productIds)
     {
         return await _dbSet
             .AsNoTracking()
-            .Where(p => productIds.Contains(p.Id)) 
+            .Where(p => productIds.Contains(p.Id))
             .ToListAsync();
     }
 

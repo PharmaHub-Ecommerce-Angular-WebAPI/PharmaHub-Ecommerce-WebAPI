@@ -56,6 +56,24 @@ namespace PharmaHub.Business.Managers
             return productDtos;
         }
         #endregion
+
+        public async Task<IReadOnlyList<Product>> GetProductsByPharmacyIdAsync(string pharmacyId)
+        {
+            var products = await _unitOfWork._productsRepo.GetProductsByPharmacyIdAsync(pharmacyId);
+            
+            foreach(var product in products)
+            {
+                var packageComponents = product.Category == ProductCategory.Package
+                    ? await _unitOfWork._PackagesComponentRepo.GetPackagesComponentsByProductIdAsync(product.Id)
+                    : new List<string>();
+                product.PackagesComponents = packageComponents.Select(PackagesComponent => new PackagesComponent
+                {
+                    ComponentName = PackagesComponent
+                }).ToList();
+            }
+            return products;
+        }
+
         public async Task AddProductAsync(AddProductDto product)
         {
             var parsedCategory = Enum.Parse<ProductCategory>(product.Category);
