@@ -4,6 +4,7 @@ using PharmaHub.Business.Contracts;
 using PharmaHub.Domain.Enums;
 using PharmaHub.DTOs.ProductDTOs;
 using PharmaHub.Presentation.ActionRequest.Product;
+using PharmaHub.Service.PhotoHandler;
 
 namespace PharmaHub.Presentation.Controllers
 {
@@ -12,10 +13,14 @@ namespace PharmaHub.Presentation.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductManager _productManager;
+        private readonly IConfiguration _configuration;
+        private  CloudinaryService _cloudinaryService;
 
-        public ProductsController(IProductManager productManager)
+        public ProductsController(IProductManager productManager, IConfiguration configuration)
         {
             _productManager = productManager;
+            _configuration = configuration;
+           
         }
 
         // -------------------- Customer Routes --------------------
@@ -93,10 +98,44 @@ namespace PharmaHub.Presentation.Controllers
 
         // POST: api/products
         [HttpPost]
-        public async Task<IActionResult> AddProduct([FromBody] CreateProductActionRequest product)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> AddProduct([FromForm] CreateProductActionRequest product)
         {
-           
-            await _productManager.AddProductAsync(product.ToDto());
+            string photoLink = string.Empty;
+
+            // Validate the product object
+            if (!(product.ImageUrl == null || product.ImageUrl.Length == 0))
+            {
+                // Validate the image file size (5MB limit)
+                if (product.ImageUrl.Length > 5 * 1024 * 1024)
+                {
+                    return BadRequest("Image size exceeds the limit of 5MB.");
+                }
+                // Validate the image file type (only allow jpg, jpeg, png)
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var fileExtension = Path.GetExtension(product.ImageUrl.FileName).ToLower();
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    return BadRequest("Invalid image format. Only jpg, jpeg, and png are allowed.");
+                }
+
+                // Validate the image file
+                var cloudName = _configuration["Cloudinary:CloudName"];
+                var apiKey = _configuration["Cloudinary:ApiKey"];
+                var apiSecret = _configuration["Cloudinary:ApiSecret"];
+                
+                // Check if Cloudinary configuration is set
+                if (string.IsNullOrEmpty(cloudName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+                {
+                    return BadRequest("Cloudinary configuration is missing.");
+                }
+                _cloudinaryService = new CloudinaryService(cloudName, apiKey, apiSecret);
+
+                // Upload the image to Cloudinary
+                photoLink =  await _cloudinaryService.UploadImageAsync(product.ImageUrl);
+            }
+            
+                await _productManager.AddProductAsync(product.ToDto(photoLink));
             return Ok (); 
             // return CreatedAtAction(nameof(SearchProducts), new { name = product.Name }, product);
         }

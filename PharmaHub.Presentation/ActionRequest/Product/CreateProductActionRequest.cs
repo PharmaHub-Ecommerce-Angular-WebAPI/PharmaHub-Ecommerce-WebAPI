@@ -6,7 +6,7 @@ namespace PharmaHub.Presentation.ActionRequest.Product
     {
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string? ImageUrl { get; set; }
+        public IFormFile? ImageUrl { get; set; }
         public decimal Price { get; set; }
         public short Quantity { get; set; }
         public short? Strength { get; set; }
@@ -28,12 +28,12 @@ namespace PharmaHub.Presentation.ActionRequest.Product
         //    Components = components;
         //}
 
-        public AddProductDto ToDto()
+        public AddProductDto ToDto(string photoLink)
         {
             return new AddProductDto(
                 Name,
                 Description,
-                ImageUrl,
+                photoLink,
                 Price,
                 Quantity,
                 Strength,
