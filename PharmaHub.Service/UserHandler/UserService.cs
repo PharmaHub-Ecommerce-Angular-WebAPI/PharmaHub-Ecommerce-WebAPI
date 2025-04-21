@@ -11,9 +11,7 @@ public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
-    private readonly VerificationCodeStore _codeStore;
-    private readonly IEmailService _emailService;
-    private readonly ISmsService _smsService;
+
 
 
     public UserService(
@@ -50,27 +48,6 @@ public class UserService : IUserService
     
      =>   await _signInManager.SignOutAsync();
 
-    public async Task SendVerificationCodeAsync(User user)
-    {
-        var code = new Random().Next(100000, 999999).ToString();
-        _codeStore.Store(user.Id, code);
 
-        var message = $"Your PharmaHub verification code is: {code}";
-        await _emailService.SendAsync(user.Email, "Verify Your Email", message);
-        await _smsService.SendSmsAsync(user.PhoneNumber, message);
-    }
-
-    public async Task<bool> VerifyCodeAsync(string userId, string enteredCode)
-    {
-        var result = _codeStore.Verify(userId, enteredCode);
-        if (!result) return false;
-
-        var user = await _userManager.FindByIdAsync(userId);
-        user.EmailConfirmed = true;
-        user.PhoneNumberConfirmed = true;
-        await _userManager.UpdateAsync(user);
-
-        return true;
-    }
 
 }
