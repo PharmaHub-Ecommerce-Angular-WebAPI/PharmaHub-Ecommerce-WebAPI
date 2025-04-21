@@ -192,8 +192,19 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
         //                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
         //                .AddEnvironmentVariables();
 
-
-
+        #region CORS-Policy
+        // Add CORS policy
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowPharmaFrontend",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200") // <-- Your Angular app's URL
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+        });
+        #endregion
 
         var app = builder.Build();
 
@@ -205,6 +216,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
         }
 
         app.UseHttpsRedirection();
+
+        app.UseCors("AllowPharmaFrontend");
 
         app.UseAuthentication();
         app.UseAuthorization();
