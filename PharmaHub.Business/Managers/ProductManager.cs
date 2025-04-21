@@ -204,11 +204,18 @@ namespace PharmaHub.Business.Managers
             return productDtos;
         }
 
+        public async Task<decimal> GetMaxPriceByCategory(ProductCategory? category)
+        {
+
+            var maxPrice = await _unitOfWork._productsRepo.GetMaxPriceByCategoryAsync(category);
+            return maxPrice;
+        }
+
         #endregion
 
 
         #region pharmacy owner
-        
+
         public async Task<ProblemDetails?> DeleteProduct(Guid productId) 
         {
             await _unitOfWork._productsRepo.DeleteAsync(productId);

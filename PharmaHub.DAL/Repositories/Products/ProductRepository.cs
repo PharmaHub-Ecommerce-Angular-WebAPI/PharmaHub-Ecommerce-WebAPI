@@ -80,6 +80,20 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
 
     }
 
+    // Get the Maximum Price of the products in each category
+
+    public async Task<decimal> GetMaxPriceByCategoryAsync(ProductCategory? category)
+    {
+       var query =  _dbSet
+                        .AsNoTracking();
+        if (category != null)
+            return await query.Where(p => p.Category == category)
+                .MaxAsync(p => p.Price);
+
+        // If category is null, return the maximum price of all products
+        return await query
+            .MaxAsync(p => p.Price);
+    }
 
 
     public async Task<IReadOnlyList<Product>> GetRangeProductsByIdsAsync(List<Guid> productIds)
