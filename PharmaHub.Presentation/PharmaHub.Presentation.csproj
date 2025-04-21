@@ -20,4 +20,9 @@
     <ProjectReference Include="..\PharmaHub.Service\PharmaHub.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PharmaHub.Business\PharmaHub.Business.csproj" />
+    <ProjectReference Include="..\PharmaHub.Service\PharmaHub.Service.csproj" />
+  </ItemGroup>
+
 </Project>

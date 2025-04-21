@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 namespace PharmaHub.Service.UserHandler;
+
 public class FileServices : IFileService
 {
     public string UploadFile(IFormFile file, string destinationFolder, string expectedType)
@@ -32,8 +33,12 @@ public class FileServices : IFileService
             }
 
             var uploadsFolder = Path.Combine(@"./wwwroot/", destinationFolder);
+
+            // Ensure the folder exists
             if (!Directory.Exists(uploadsFolder))
+            {
                 Directory.CreateDirectory(uploadsFolder);
+            }
 
             uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(file.FileName);
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);

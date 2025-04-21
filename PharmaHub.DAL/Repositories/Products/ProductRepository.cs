@@ -62,7 +62,6 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
                 .Skip((page - 1) * sizePerCategory)
                 .Take(sizePerCategory)
                 .ToListAsync();
-          // var x= categoryProducts.Where(p => p.Category == category && p.Quantity > 0);
 
             // Add the products of the current category to the result list
 

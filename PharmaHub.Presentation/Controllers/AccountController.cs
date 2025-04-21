@@ -23,7 +23,7 @@ namespace PharmaHub.Presentation.Controllers
         private readonly JwtTokenService _jwtService;
         private readonly IVerificationCodeService _verificationCodeService;
         private readonly IEmailService _emailService;
-  
+
 
         public AccountController(
             UserManager<User> userManager, 
@@ -43,8 +43,8 @@ namespace PharmaHub.Presentation.Controllers
         }
 
 
+        
         #region Register with Built-in Email Verification
-
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
         {
@@ -89,17 +89,17 @@ namespace PharmaHub.Presentation.Controllers
 
 
                 var user = MapToCustomer(request);
-                var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user, request.Password);
 
-                if (result.Succeeded)
-                {
+            if (result.Succeeded)
+            {
                     await _userManager.AddToRoleAsync(user, "Customer");
                     _verificationCodeService.ClearCode(normalizedEmail);
                     return Ok("Account registered successfully");
-                }
+            }
 
                 return BadRequest(result.Errors.Select(e => e.Description));
-            }
+        }
         }
 
 
@@ -151,7 +151,7 @@ namespace PharmaHub.Presentation.Controllers
                 await _emailService.SendVerificationCode(request.Email, code, request.PharmacyName);
 
                 return Ok(new VerificationResponse
-                {
+            {
                     Message = "Verification code sent to your email",
                     RequiresVerification = true
                 });

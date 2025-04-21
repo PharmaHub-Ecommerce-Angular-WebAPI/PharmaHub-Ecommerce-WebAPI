@@ -142,6 +142,46 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddDefaultTokenProviders();
          * */
 
+        #endregion
+
+
+        #region Configration_identity
+
+        builder.Services.AddIdentity<User, IdentityRole>(options =>
+        {
+            options.Password.RequireDigit = true;
+            //options.Password.RequiredLength = 6;
+            //options.Password.RequireNonAlphanumeric = false;
+            //options.Password.RequireUppercase = false;
+            //options.Password.RequireLowercase = false;
+            options.User.RequireUniqueEmail = true; // Ensure unique email addresses
+        })
+            //.AddRoles<IdentityRole>()  // Enable role-based authorization
+            .AddEntityFrameworkStores<ApplicationDbContext>() 
+            .AddDefaultTokenProviders();
+
+        #endregion
+
+        #region Configuration Json For accept enum names as strings
+        builder.Services.AddControllers()
+                              .AddJsonOptions(options =>
+                              {
+                                  options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                              });
+
+        #endregion
+
+        #region JWT_Configrations
+        /*
+         * 
+         * 
+         * 
+        // Identity with Roles
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+         * */
+
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
