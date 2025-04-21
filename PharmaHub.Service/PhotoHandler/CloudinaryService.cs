@@ -31,35 +31,3 @@ namespace PharmaHub.Service.PhotoHandler
         }
     }
 }
-/*
- * builder.Services.Configure<CloudinaryConfig>(builder.Configuration.GetSection("Cloudinary")); in cs
- * 
- * 
- * [ApiController]
-[Route("api/[controller]")]
-public class ImageController : ControllerBase
-{
-    private readonly CloudinaryService _cloudinaryService;
-
-    public ImageController(IConfiguration config)
-    {
-        _cloudinaryService = new CloudinaryService(config);
-    }
-
-    [HttpPost("upload")]
-    public async Task<IActionResult> UploadImage(IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-            return BadRequest("Invalid image");
-
- public ImageController(IConfiguration config)
-    {
-        var cloudName = config["Cloudinary:CloudName"];
-        var apiKey = config["Cloudinary:ApiKey"];
-        var apiSecret = config["Cloudinary:ApiSecret"];
-
-        _cloudinaryService = new CloudinaryService(cloudName, apiKey, apiSecret);
-    }        return Ok(new { imageUrl = url });
-    }
-}
-*/
