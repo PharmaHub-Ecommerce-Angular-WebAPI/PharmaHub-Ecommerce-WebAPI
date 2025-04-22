@@ -128,16 +128,6 @@ public class Program
         #endregion
 
         #region JWT_Configrations
-        /*
-         * 
-         * 
-         * 
-        // Identity with Roles
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
-         * */
-
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -161,7 +151,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
             };
         });
         builder.Services.AddAuthorization();
-        builder.Services.AddScoped(sp => new JwtTokenService(builder.Configuration["JwtSettings: Key"], builder.Configuration["JwtSettings:Issuer"], builder.Configuration["JwtSettings:Audience"], sp.GetRequiredService<UserManager<User>>()));
+        builder.Services.AddScoped(sp => new JwtTokenService(builder.Configuration["JwtSettings:Key"], builder.Configuration["JwtSettings:Issuer"], builder.Configuration["JwtSettings:Audience"], sp.GetRequiredService<UserManager<User>>()));
 
 
         #endregion
