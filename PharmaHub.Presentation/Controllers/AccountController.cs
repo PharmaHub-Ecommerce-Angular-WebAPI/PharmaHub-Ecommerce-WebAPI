@@ -46,8 +46,8 @@ namespace PharmaHub.Presentation.Controllers
 
         #endregion
 
-        #region Register with Built-in Email Verification
-
+        #region Shared Verification Code
+        #region send-verification-code
         [HttpPost("send-verification-code")]
         public async Task<IActionResult> SendVerificationCode([FromBody] SendCodeRequest request)
         {
@@ -60,11 +60,13 @@ namespace PharmaHub.Presentation.Controllers
                 return BadRequest("Too many attempts. Please try again later.");
 
             var code = _verificationCodeService.GenerateAndStoreCode(email);
-            await _emailService.SendVerificationCode(email, code, request.CustomerName);
+            await _emailService.SendVerificationCode(email, code, request.Name);
 
             return Ok(new { Message = "Verification code sent to your email." });
         }
+        #endregion
 
+        #region verify-code
         [HttpPost("verify-code")]
         public IActionResult VerifyCode([FromBody] VerifyCodeRequest request)
         {
@@ -80,102 +82,10 @@ namespace PharmaHub.Presentation.Controllers
             return Ok("Verification successful.");
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
-        {
-            request.Email = request.Email?.Trim().ToLower();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        #endregion
 
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser != null)
-                return BadRequest("Email is already registered");
-
-            if (!_verificationCodeService.IsVerified(request.Email))
-                return BadRequest("Email not verified.");
-
-
-            var user = MapToCustomer(request);
-            var result = await _userManager.CreateAsync(user, request.Password);
-
-            if (result.Succeeded)
-            {
-                user.EmailConfirmed = true;
-                await _userManager.AddToRoleAsync(user, "Customer");
-                _verificationCodeService.ClearCode(request.Email);
-
-                return Ok("Account registered successfully");
-            }
-
-            return BadRequest(result.Errors.Select(e => e.Description));
-        }
-
-
-
-        //[HttpPost("register")]
-        //public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
-        //{
-        //    // Normalize email before validation
-        //    request.Email = request.Email?.Trim().ToLower();
-
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    var normalizedEmail = request.Email;
-
-        //    var existingUser = await _userManager.FindByEmailAsync(normalizedEmail);
-        //    if (existingUser != null)
-        //        return BadRequest("Email is already registered");
-
-        //    // First step - no code provided
-        //    if (string.IsNullOrEmpty(request.VerificationCode))
-        //    {
-        //        // ✅ Check attempts before generating code
-        //        if (_verificationCodeService.HasTooManyAttempts(normalizedEmail))
-        //            return BadRequest("Too many attempts. Please try again later.");
-
-        //        var code = _verificationCodeService.GenerateAndStoreCode(normalizedEmail);
-
-        //        await _emailService.SendVerificationCode(normalizedEmail, code, request.CustomerName);
-
-        //        return Ok(new
-        //        {
-        //            Message = "Verification code sent to your email",
-        //            RequiresVerification = true
-        //        });
-        //    }
-        //    else
-        //    {
-        //        var verificationResult = _verificationCodeService.VerifyCode(normalizedEmail, request.VerificationCode);
-
-        //        if (verificationResult == "Invalid")
-        //            return BadRequest($"Invalid verification code. You have {_verificationCodeService.GetRemainingAttempts(normalizedEmail)} attempts remaining.");
-
-        //        if (verificationResult == "Expired")
-        //            return BadRequest("Verification code has expired. Please request a new one.");
-
-
-        //        var user = MapToCustomer(request);
-        //    var result = await _userManager.CreateAsync(user, request.Password);
-
-        //    if (result.Succeeded)
-        //    {
-        //            user.EmailConfirmed = true;
-
-        //            await _userManager.AddToRoleAsync(user, "Customer");
-
-        //            _verificationCodeService.ClearCode(normalizedEmail);
-
-        //            return Ok("Account registered successfully");
-        //    }
-
-        //        return BadRequest(result.Errors.Select(e => e.Description));
-        //}
-        //}
-
-
-        // Add this endpoint for code resend
+        #region resend-verification
         [HttpPost("resend-verification")]
         public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
         {
@@ -192,6 +102,45 @@ namespace PharmaHub.Presentation.Controllers
 
         #endregion
 
+        #endregion
+
+        #region Register with Built-in Email Verification
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
+        {
+            var email = request.Email.ToLower();
+
+            var isVerified = _verificationCodeService.IsVerified(email);
+            Console.WriteLine($"IsVerified check for {email}: {isVerified}");
+            if (!isVerified)
+            {
+                return BadRequest("Email is not verified.");
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
+                return BadRequest("Email is already registered");
+
+            var user = MapToCustomer(request);
+            var result = await _userManager.CreateAsync(user, request.Password);
+
+            if (result.Succeeded)
+            {
+                user.EmailConfirmed = true;
+                await _userManager.AddToRoleAsync(user, "Customer");
+                _verificationCodeService.ClearCode(request.Email);
+
+                return Ok("Account registered successfully");
+            }
+
+            return BadRequest(result.Errors.Select(e => e.Description));
+        }
+
+        #endregion
+
         #region RegisterPharmacy
         [HttpPost("pharmacyregister")]
         [Consumes("multipart/form-data")]
@@ -199,6 +148,13 @@ namespace PharmaHub.Presentation.Controllers
         {
             // Normalize email before validation
             request.Email = request.Email?.Trim().ToLower();
+
+            var isVerified = _verificationCodeService.IsVerified(request.Email);
+            Console.WriteLine($"IsVerified check for {request.Email}: {isVerified}");
+            if (!isVerified)
+            {
+                return BadRequest("Email is not verified.");
+            }
 
             // Validate the file type
             if (request.FormalPapersURL is null)
@@ -264,41 +220,12 @@ namespace PharmaHub.Presentation.Controllers
                 logoFileName  =  await _cloudinaryService.UploadImageAsync(request.LogoURL);
             }
 
-
-            var normalizedEmail = request.Email;
-
-
             // Check if the email is already registered
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
             if (existingUser != null)
                 return BadRequest("Email is already registered");
 
-            // First step - no code provided
-            if (string.IsNullOrEmpty(request.VerificationCode))
-            {
-                if (_verificationCodeService.HasTooManyAttempts(request.Email))
-                    return BadRequest("Too many attempts. Please try again later.");
-
-                var code = _verificationCodeService.GenerateAndStoreCode(request.Email);
-
-                await _emailService.SendVerificationCode(request.Email, code, request.PharmacyName);
-
-                return Ok(new VerificationResponse
-                {
-                    Message = "Verification code sent to your email",
-                    RequiresVerification = true
-                });
-            }
-            else
-            {
-                var verificationResult = _verificationCodeService.VerifyCode(request.Email, request.VerificationCode);
-
-                if (verificationResult == "Invalid")
-                    return BadRequest($"Invalid verification code. You have {_verificationCodeService.GetRemainingAttempts(request.Email)} attempts remaining.");
-
-                if (verificationResult == "Expired")
-                    return BadRequest("Verification code has expired. Please request a new one.");
-
+          
                 var uploadedFileName = await _cloudinaryService.UploadImageAsync(request.FormalPapersURL);
                 if (request.LogoURL != null)
                 {
@@ -311,14 +238,13 @@ namespace PharmaHub.Presentation.Controllers
                 if (result.Succeeded)
                 {
                     pharmacy.EmailConfirmed = true;
-
-                    _verificationCodeService.ClearCode(normalizedEmail);
-
+                    await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
+                    _verificationCodeService.ClearCode(request.Email);
                     return Ok("Account registered successfully");
                 }
 
                 return BadRequest(result.Errors.Select(e => e.Description));
-            }
+            
         }
 
 
@@ -326,34 +252,40 @@ namespace PharmaHub.Presentation.Controllers
         [HttpPut("pharmacy/approve/{email}")]
         public async Task<IActionResult> ApprovePharmacy(string email)
         {
-            // Find the pharmacy user by email
-            var pharmacy = await _userManager.FindByEmailAsync(email);
-            if (pharmacy == null)
-                return NotFound("Pharmacy not found");
-
-            // Convert status from pending to approved (assuming you have a property for this)
-      
-            pharmacy.AccountStat = AccountStats.Active;
-
-            // Update the user
-            var result = await _userManager.UpdateAsync(pharmacy);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors.Select(e => e.Description));
-
-            // Assign the pharmacy user to the Pharmacy role if not already in it
-            if (!await _userManager.IsInRoleAsync(pharmacy, "Pharmacy"))
+            try
             {
-                var roleResult = await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
-                if (!roleResult.Succeeded)
-                    return BadRequest(roleResult.Errors.Select(e => e.Description));
+                // Find the pharmacy user by email
+                var pharmacy = await _userManager.FindByEmailAsync(email);
+                if (pharmacy == null)
+                    return NotFound("Pharmacy not found");
+
+                // Check if already approved
+                if (pharmacy.AccountStat == AccountStats.Active)
+                    return Ok("Pharmacy is already approved");
+
+                // Update status to approved
+                pharmacy.AccountStat = AccountStats.Active;
+
+                // Update the user
+                var result = await _userManager.UpdateAsync(pharmacy);
+                if (!result.Succeeded)
+                    return BadRequest(result.Errors.Select(e => e.Description));
+
+                // Assign to Pharmacy role if needed
+                if (!await _userManager.IsInRoleAsync(pharmacy, "Pharmacy"))
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
+                    if (!roleResult.Succeeded)
+                        return BadRequest(roleResult.Errors.Select(e => e.Description));
+                }
+
+                return Ok("Pharmacy approved successfully");
             }
+            catch (Exception ex)
+            {
 
-            // Remove the pending pharmacy registration from the cache
-            // You'll need to implement your cache removal logic here
-            // For example: _cache.Remove(email);
-
-            return Ok("Pharmacy approved, updated, and assigned to role.");
+                return StatusCode(500, "An error occurred while processing your request");
+            }
         }
 
         #endregion

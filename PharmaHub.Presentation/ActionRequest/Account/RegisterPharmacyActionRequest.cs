@@ -31,11 +31,11 @@ namespace PharmaHub.Presentation.ActionRequest.Account
         [RegularExpression(@"^\+?[0-9]{10,15}$", ErrorMessage = "Phone number must be between 10 to 15 digits.")]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Formal papers URL is required.")]
+        //[Required(ErrorMessage = "Formal papers URL is required.")]
         public IFormFile? FormalPapersURL { get; set; }
 
-        [Required(ErrorMessage = "Logo URL is required.")]
-        public IFormFile LogoURL { get; set; }
+        //[Required(ErrorMessage = "Logo URL is required.")]
+        public IFormFile? LogoURL { get; set; }
 
         [Required(ErrorMessage = "Credit card number is required.")]
         [RegularExpression(@"^\d{16}$", ErrorMessage = "Credit card number must be 16 digits.")]
@@ -61,7 +61,6 @@ namespace PharmaHub.Presentation.ActionRequest.Account
         [Range(0, 23, ErrorMessage = "Close time must be between 0 and 23.")]
         public byte CloseTime { get; set; }
 
-        public string? VerificationCode { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

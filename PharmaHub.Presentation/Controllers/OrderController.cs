@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PharmaHub.Business.Contracts;
 using PharmaHub.Presentation.ActionRequest.Order;
+using PharmaHub.Service.Payment;
 
 namespace PharmaHub.Presentation.Controllers
 {
@@ -11,10 +12,12 @@ namespace PharmaHub.Presentation.Controllers
     {
         #region Field and Constructor
         private readonly IOrderManager _orderManager;
+        private readonly PaymentService _paymentService;
         public OrderController(IOrderManager orderManager)
         {
             _orderManager = orderManager;
-        } 
+
+        }
         #endregion
 
         #region Create Order
@@ -24,11 +27,22 @@ namespace PharmaHub.Presentation.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var paymentResult = await _paymentService.ProcessPayment(order.PaymentToken);
+
+            if (!paymentResult.Success)
+            {
+                return BadRequest(new
+                {
+                    error = "PaymentFailed",
+                    message = "Payment failed. Please try again."
+                });
+            }
+
             var dto = order.ToDto();
             var problem = await _orderManager.CreateOrderAsync(dto);
 
             if (problem == null)
-                return Ok("Order created successfully.");
+                return Ok(new { message = "Order created successfully." });
 
             return BadRequest(new
             {

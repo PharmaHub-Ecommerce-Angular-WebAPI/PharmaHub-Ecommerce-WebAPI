@@ -2,7 +2,7 @@
 {
     public class SendCodeRequest
     {
-        public string  CustomerName { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
     }
 }

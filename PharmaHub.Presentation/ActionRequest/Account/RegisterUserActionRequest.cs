@@ -40,8 +40,6 @@ public class RegisterUserActionRequest : IValidatableObject
     [Required(ErrorMessage = "City is required.")]
     [EnumDataType(typeof(Governorates), ErrorMessage = "Invalid governorate selection.")]
     public Governorates City { get; set; }
-
-    public string? VerificationCode { get; set; }
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {  
         // For country validation

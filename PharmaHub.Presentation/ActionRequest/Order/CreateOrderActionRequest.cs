@@ -8,6 +8,7 @@ namespace PharmaHub.Presentation.ActionRequest.Order
         public string CustomerId { get; set; } 
         public PaymentMethods PaymentMethod { get; set; }
         public OrderStatus OrderStatus { get; set; }
+        public string PaymentToken { get; set; }
 
         // ProductId -> Amount
         public Dictionary<Guid,short> ProductAmounts { get; set; }
