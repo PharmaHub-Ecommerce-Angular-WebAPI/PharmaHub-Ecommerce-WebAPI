@@ -93,7 +93,17 @@ namespace PharmaHub.Presentation.Controllers
             return Ok(fuzzyResult);
         }
 
-
+        // GET: api/products/MaxPrice
+        [HttpGet("MaxPrice")]
+        public async Task<IActionResult> GetMaxPriceByCategory(ProductCategory? category)
+        {
+            var maxPrice = await _productManager.GetMaxPriceByCategory(category);
+            if (maxPrice == 0)
+            {
+                return NotFound("No products found.");
+            }
+            return Ok(maxPrice);
+        }
         // -------------------- Pharmacy Owner Routes --------------------
 
         // POST: api/products

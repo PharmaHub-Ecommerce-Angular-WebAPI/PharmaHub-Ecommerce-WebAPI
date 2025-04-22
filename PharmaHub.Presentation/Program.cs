@@ -18,6 +18,7 @@ using PharmaHub.DALRepositories;
 using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Infrastructure;
+using PharmaHub.Presentation.Controllers;
 using PharmaHub.Service.JWT_Handler;
 using PharmaHub.Service.OpenFDA_Handler;
 using PharmaHub.Service.UserHandler;
