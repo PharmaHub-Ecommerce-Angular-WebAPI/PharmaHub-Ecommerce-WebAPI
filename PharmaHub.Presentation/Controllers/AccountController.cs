@@ -294,7 +294,7 @@ namespace PharmaHub.Presentation.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginUserActionRequest request)
         {
-            var user = await _userManager.FindByNameAsync(request.Email);
+            var user = await _userManager.FindByEmailAsync(request.Email);
 
             // User exists
             if (user != null)
