@@ -75,13 +75,9 @@ public class Program
         //Register Unit of Verification Code
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
 
-        //Register Unit of File Service
-        builder.Services.AddScoped<IFileService, FileServices>();
 
-     
+
         builder.Services.AddMemoryCache();
-
-
         #endregion
 
         // Add services to the container.
@@ -188,11 +184,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 Security = true
             });
         });
-        //builder.Configuration
-        //                .SetBasePath(Directory.GetCurrentDirectory())
-        //                .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
-        //                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-        //                .AddEnvironmentVariables();
+      
 
         #region CORS-Policy
         // Add CORS policy

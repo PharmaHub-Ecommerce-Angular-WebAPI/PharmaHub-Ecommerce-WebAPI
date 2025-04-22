@@ -10,6 +10,8 @@ namespace PharmaHub.Presentation.ActionRequest.Account
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Pharmacy name must be between 3 and 100 characters.")]
         public string PharmacyName { get; set; } = string.Empty;
 
+        public string UserName { get; set; }
+
         public AccountStats AccountStat { get; set; } = AccountStats.Pending;
 
         [Required(ErrorMessage = "Email is required.")]
@@ -30,11 +32,9 @@ namespace PharmaHub.Presentation.ActionRequest.Account
         public string PhoneNumber { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Formal papers URL is required.")]
-        [Url(ErrorMessage = "Formal papers URL must be a valid URL.")]
-        public IFormFile FormalPapersURL { get; set; }
+        public IFormFile? FormalPapersURL { get; set; }
 
         [Required(ErrorMessage = "Logo URL is required.")]
-        [Url(ErrorMessage = "Logo URL must be a valid URL.")]
         public IFormFile LogoURL { get; set; }
 
         [Required(ErrorMessage = "Credit card number is required.")]
@@ -61,8 +61,7 @@ namespace PharmaHub.Presentation.ActionRequest.Account
         [Range(0, 23, ErrorMessage = "Close time must be between 0 and 23.")]
         public byte CloseTime { get; set; }
 
-       public string? VerificationCode { get; set; }
-        public DateTime DateRequested { get; set; } = DateTime.UtcNow;
+        public string? VerificationCode { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

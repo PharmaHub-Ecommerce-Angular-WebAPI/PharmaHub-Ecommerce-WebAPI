@@ -1,13 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using PharmaHub.DAL.Repositories;
+using PharmaHub.Domain.Entities;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Presentation.ActionRequest.Account;
 using PharmaHub.Presentation.Extensions;
 using PharmaHub.Service.JWT_Handler;
+using PharmaHub.Service.PhotoHandler;
 using PharmaHub.Service.UserHandler;
 using PharmaHub.Service.UserHandler.Verification;
 
@@ -17,33 +21,31 @@ namespace PharmaHub.Presentation.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        #region field and Prop
         private readonly UserManager<User> _userManager;
-        private readonly IMemoryCache _memoryCache;
-        private readonly IFileService _fileService;
         private readonly JwtTokenService _jwtService;
         private readonly IVerificationCodeService _verificationCodeService;
         private readonly IEmailService _emailService;
-
+        private CloudinaryService _cloudinaryService;
+        private readonly IConfiguration _configuration;
 
         public AccountController(
-            UserManager<User> userManager, 
-            IMemoryCache memoryCache,
-            IFileService fileService, 
+            UserManager<User> userManager,
             JwtTokenService jwtTokenService,
             IVerificationCodeService verificationCodeService,
-            IEmailService emailService
-            )
+            IEmailService emailService,
+            IConfiguration configuration
+        )
         {
             _userManager = userManager;
-           _memoryCache = memoryCache;
-            _fileService=fileService;
             _jwtService=jwtTokenService;
-           _verificationCodeService=verificationCodeService;
+            _verificationCodeService=verificationCodeService;
             _emailService=emailService;
+            _configuration = configuration;
         }
 
+        #endregion
 
-        
         #region Register with Built-in Email Verification
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
@@ -93,8 +95,12 @@ namespace PharmaHub.Presentation.Controllers
 
             if (result.Succeeded)
             {
+                    user.EmailConfirmed = true;
+
                     await _userManager.AddToRoleAsync(user, "Customer");
+
                     _verificationCodeService.ClearCode(normalizedEmail);
+
                     return Ok("Account registered successfully");
             }
 
@@ -122,6 +128,7 @@ namespace PharmaHub.Presentation.Controllers
 
         #region RegisterPharmacy
         [HttpPost("pharmacyregister")]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> RegisterPharmacy([FromForm] RegisterPharmacyActionRequest request)
         {
             // Normalize email before validation
@@ -129,10 +136,71 @@ namespace PharmaHub.Presentation.Controllers
 
             // Validate the file type
             if (request.FormalPapersURL is null)
-                return BadRequest("Formal papers URL is required.");
+            {
+                return BadRequest(new { message = "FormalPapersURL was not received." });
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            // Validate FormalPapersURL
+            if (request.FormalPapersURL == null || request.FormalPapersURL.Length == 0)
+                return BadRequest(new { message = "FormalPapersURL was not received." });
+
+            // Validate file size (limit to 5MB)
+            if (request.FormalPapersURL.Length > 5 * 1024 * 1024)
+                return BadRequest("Formal paper file size exceeds the limit of 5MB.");
+
+            // Validate file type (only allow PDF)
+            var allowedPdfExtensions = new[] { ".pdf" };
+            var formalPapersExtension = Path.GetExtension(request.FormalPapersURL.FileName).ToLower();
+            if (!allowedPdfExtensions.Contains(formalPapersExtension))
+                return BadRequest("Invalid formal paper format. Only PDF is allowed.");
+
+            // Validate the image file
+            var cloudName = _configuration["Cloudinary:CloudName"];
+            var apiKey = _configuration["Cloudinary:ApiKey"];
+            var apiSecret = _configuration["Cloudinary:ApiSecret"];
+
+            // Check if Cloudinary configuration is set
+            if (string.IsNullOrEmpty(cloudName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+            {
+                return BadRequest("Cloudinary configuration is missing.");
+            }
+            _cloudinaryService = new CloudinaryService(cloudName, apiKey, apiSecret);
+
+
+            // Validate LogoURL if provided
+            string logoFileName = string.Empty;
+            if (!(request.LogoURL == null || request.LogoURL.Length == 0))
+            {
+                // Validate the image file size (5MB limit)
+                if (request.LogoURL.Length > 5 * 1024 * 1024)
+                {
+                    return BadRequest("Image size exceeds the limit of 5MB.");
+                }
+                // Validate the image file type (only allow jpg, jpeg, png)
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var fileExtension = Path.GetExtension(request.LogoURL.FileName).ToLower();
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    return BadRequest("Invalid image format. Only jpg, jpeg, and png are allowed.");
+                }
+
+                // Check if Cloudinary configuration is set
+                if (string.IsNullOrEmpty(cloudName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+                {
+                    return BadRequest("Cloudinary configuration is missing.");
+                }
+                _cloudinaryService = new CloudinaryService(cloudName, apiKey, apiSecret);
+
+                // Upload the image to Cloudinary
+                logoFileName  =  await _cloudinaryService.UploadImageAsync(request.LogoURL);
+            }
+
+
+            var normalizedEmail = request.Email;
+
 
             // Check if the email is already registered
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
@@ -142,7 +210,6 @@ namespace PharmaHub.Presentation.Controllers
             // First step - no code provided
             if (string.IsNullOrEmpty(request.VerificationCode))
             {
-                // ✅ Check attempts before generating code
                 if (_verificationCodeService.HasTooManyAttempts(request.Email))
                     return BadRequest("Too many attempts. Please try again later.");
 
@@ -151,7 +218,7 @@ namespace PharmaHub.Presentation.Controllers
                 await _emailService.SendVerificationCode(request.Email, code, request.PharmacyName);
 
                 return Ok(new VerificationResponse
-            {
+                {
                     Message = "Verification code sent to your email",
                     RequiresVerification = true
                 });
@@ -166,65 +233,62 @@ namespace PharmaHub.Presentation.Controllers
                 if (verificationResult == "Expired")
                     return BadRequest("Verification code has expired. Please request a new one.");
 
-                var uploadedFileName = _fileService.UploadFile(request.FormalPapersURL, "FormalPapers", "pdf");
-                var logoFileName = _fileService.UploadFile(request.LogoURL, "logo", "image");
-
-                // Store only metadata in cache
-                var pendingRegistration = new PendingRegistration
+                var uploadedFileName = await _cloudinaryService.UploadImageAsync(request.FormalPapersURL);
+                if (request.LogoURL != null)
                 {
-                    Email = request.Email,
-                    Password = request.Password,
-                    LogoURL = logoFileName,
-                    CreditCardNumber = request.CreditCardNumber,
-                    PharmacyName = request.PharmacyName,
-                    FormalPapersURL = uploadedFileName, // Store filename only
-                    PhoneNumber = request.PhoneNumber,
-                    Country = request.Country,
-                    City = request.city,
-                    Address = request.Address,
-                    OpenTime = request.OpenTime,
-                    CloseTime = request.CloseTime,
-                    DateRequested = DateTime.UtcNow
-                };
+                    logoFileName = await _cloudinaryService.UploadImageAsync(request.LogoURL);
+                }
 
-                _memoryCache.Set($"PendingPharmacy_{request.Email}", pendingRegistration, TimeSpan.FromDays(30));
-                return Ok(new { Message = "Registration pending admin approval." });
+                var pharmacy = MapToPharmacy(request, uploadedFileName, logoFileName);
+                var result = await _userManager.CreateAsync(pharmacy, request.Password);
+
+                if (result.Succeeded)
+                {
+                    pharmacy.EmailConfirmed = true;
+
+                    _verificationCodeService.ClearCode(normalizedEmail);
+
+                    return Ok("Account registered successfully");
+                }
+
+                return BadRequest(result.Errors.Select(e => e.Description));
             }
         }
 
 
-
-        [HttpPut("approve/{email}")]
+        [Authorize(Roles = "Admin")]
+        [HttpPut("pharmacy/approve/{email}")]
         public async Task<IActionResult> ApprovePharmacy(string email)
         {
-            var cacheKey = $"PendingPharmacy_{email.ToLower()}";
+            // Find the pharmacy user by email
+            var pharmacy = await _userManager.FindByEmailAsync(email);
+            if (pharmacy == null)
+                return NotFound("Pharmacy not found");
 
-            if (!_memoryCache.TryGetValue(cacheKey, out PendingRegistration pendingPharmacy))
-                return NotFound("Pending registration not found or expired.");
+            // Convert status from pending to approved (assuming you have a property for this)
+      
+            pharmacy.AccountStat = AccountStats.Active;
 
-            // Convert PendingRegistration to RegisterPharmacyActionRequest
-            var registerRequest = ConversionHelper.ConvertToRegisterPharmacyActionRequest(pendingPharmacy);
+            // Update the user
+            var result = await _userManager.UpdateAsync(pharmacy);
 
-            var uploadedFileName = pendingPharmacy.FormalPapersURL;
-            var logoFileName = pendingPharmacy.LogoURL;
-
-            // Map to Pharmacy entity
-           var pharmacy = MapToPharmacy(registerRequest, uploadedFileName, logoFileName);
-
-            // Create the pharmacy user
-            var result = await _userManager.CreateAsync(pharmacy, pendingPharmacy.Password);
             if (!result.Succeeded)
                 return BadRequest(result.Errors.Select(e => e.Description));
 
-            // Assign the pharmacy user to the Pharmacy role
-            await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
+            // Assign the pharmacy user to the Pharmacy role if not already in it
+            if (!await _userManager.IsInRoleAsync(pharmacy, "Pharmacy"))
+            {
+                var roleResult = await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
+                if (!roleResult.Succeeded)
+                    return BadRequest(roleResult.Errors.Select(e => e.Description));
+            }
 
             // Remove the pending pharmacy registration from the cache
-            _memoryCache.Remove(cacheKey);
+            // You'll need to implement your cache removal logic here
+            // For example: _cache.Remove(email);
 
-            return Ok("Pharmacy approved, created, and assigned to role.");
+            return Ok("Pharmacy approved, updated, and assigned to role.");
         }
-
 
         #endregion
 
@@ -264,7 +328,8 @@ namespace PharmaHub.Presentation.Controllers
         {
             return new Pharmacy
             {
-                UserName = request.PharmacyName,
+                PharmacyName = request.PharmacyName,
+                UserName = request.UserName,
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 Country = request.Country,
@@ -274,8 +339,9 @@ namespace PharmaHub.Presentation.Controllers
                 LogoURL = logoFileName,
                 CreditCardNumber = request.CreditCardNumber,
                 OpenTime = request.OpenTime,
-                CloseTime = request.CloseTime
-
+                CloseTime = request.CloseTime,
+                Address = request.Address
+               
             };
         }
         private Customer MapToCustomer(RegisterUserActionRequest request)
@@ -298,5 +364,3 @@ namespace PharmaHub.Presentation.Controllers
 
 
 }
-
-
