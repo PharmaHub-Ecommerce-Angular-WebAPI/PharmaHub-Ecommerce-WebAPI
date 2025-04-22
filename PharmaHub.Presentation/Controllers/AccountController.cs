@@ -47,66 +47,132 @@ namespace PharmaHub.Presentation.Controllers
         #endregion
 
         #region Register with Built-in Email Verification
+
+        [HttpPost("send-verification-code")]
+        public async Task<IActionResult> SendVerificationCode([FromBody] SendCodeRequest request)
+        {
+            var email = request.Email?.Trim().ToLower();
+
+            if (string.IsNullOrWhiteSpace(email))
+                return BadRequest("Email is required.");
+
+            if (_verificationCodeService.HasTooManyAttempts(email))
+                return BadRequest("Too many attempts. Please try again later.");
+
+            var code = _verificationCodeService.GenerateAndStoreCode(email);
+            await _emailService.SendVerificationCode(email, code, request.CustomerName);
+
+            return Ok(new { Message = "Verification code sent to your email." });
+        }
+
+        [HttpPost("verify-code")]
+        public IActionResult VerifyCode([FromBody] VerifyCodeRequest request)
+        {
+            var email = request.Email?.Trim().ToLower();
+            var result = _verificationCodeService.VerifyCode(email, request.VerificationCode);
+
+            if (result == "Invalid")
+                return BadRequest($"Invalid verification code. You have {_verificationCodeService.GetRemainingAttempts(email)} attempts remaining.");
+
+            if (result == "Expired")
+                return BadRequest("Verification code has expired. Please request a new one.");
+
+            return Ok("Verification successful.");
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
         {
-            // Normalize email before validation
             request.Email = request.Email?.Trim().ToLower();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var normalizedEmail = request.Email;
-
-            var existingUser = await _userManager.FindByEmailAsync(normalizedEmail);
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
             if (existingUser != null)
                 return BadRequest("Email is already registered");
 
-            // First step - no code provided
-            if (string.IsNullOrEmpty(request.VerificationCode))
-            {
-                // ✅ Check attempts before generating code
-                if (_verificationCodeService.HasTooManyAttempts(normalizedEmail))
-                    return BadRequest("Too many attempts. Please try again later.");
-
-                var code = _verificationCodeService.GenerateAndStoreCode(normalizedEmail);
-
-                await _emailService.SendVerificationCode(normalizedEmail, code, request.CustomerName);
-
-                return Ok(new
-                {
-                    Message = "Verification code sent to your email",
-                    RequiresVerification = true
-                });
-            }
-            else
-            {
-                var verificationResult = _verificationCodeService.VerifyCode(normalizedEmail, request.VerificationCode);
-
-                if (verificationResult == "Invalid")
-                    return BadRequest($"Invalid verification code. You have {_verificationCodeService.GetRemainingAttempts(normalizedEmail)} attempts remaining.");
-
-                if (verificationResult == "Expired")
-                    return BadRequest("Verification code has expired. Please request a new one.");
+            if (!_verificationCodeService.IsVerified(request.Email))
+                return BadRequest("Email not verified.");
 
 
-                var user = MapToCustomer(request);
+            var user = MapToCustomer(request);
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (result.Succeeded)
             {
-                    user.EmailConfirmed = true;
+                user.EmailConfirmed = true;
+                await _userManager.AddToRoleAsync(user, "Customer");
+                _verificationCodeService.ClearCode(request.Email);
 
-                    await _userManager.AddToRoleAsync(user, "Customer");
-
-                    _verificationCodeService.ClearCode(normalizedEmail);
-
-                    return Ok("Account registered successfully");
+                return Ok("Account registered successfully");
             }
 
-                return BadRequest(result.Errors.Select(e => e.Description));
+            return BadRequest(result.Errors.Select(e => e.Description));
         }
-        }
+
+
+
+        //[HttpPost("register")]
+        //public async Task<IActionResult> Register([FromBody] RegisterUserActionRequest request)
+        //{
+        //    // Normalize email before validation
+        //    request.Email = request.Email?.Trim().ToLower();
+
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+
+        //    var normalizedEmail = request.Email;
+
+        //    var existingUser = await _userManager.FindByEmailAsync(normalizedEmail);
+        //    if (existingUser != null)
+        //        return BadRequest("Email is already registered");
+
+        //    // First step - no code provided
+        //    if (string.IsNullOrEmpty(request.VerificationCode))
+        //    {
+        //        // ✅ Check attempts before generating code
+        //        if (_verificationCodeService.HasTooManyAttempts(normalizedEmail))
+        //            return BadRequest("Too many attempts. Please try again later.");
+
+        //        var code = _verificationCodeService.GenerateAndStoreCode(normalizedEmail);
+
+        //        await _emailService.SendVerificationCode(normalizedEmail, code, request.CustomerName);
+
+        //        return Ok(new
+        //        {
+        //            Message = "Verification code sent to your email",
+        //            RequiresVerification = true
+        //        });
+        //    }
+        //    else
+        //    {
+        //        var verificationResult = _verificationCodeService.VerifyCode(normalizedEmail, request.VerificationCode);
+
+        //        if (verificationResult == "Invalid")
+        //            return BadRequest($"Invalid verification code. You have {_verificationCodeService.GetRemainingAttempts(normalizedEmail)} attempts remaining.");
+
+        //        if (verificationResult == "Expired")
+        //            return BadRequest("Verification code has expired. Please request a new one.");
+
+
+        //        var user = MapToCustomer(request);
+        //    var result = await _userManager.CreateAsync(user, request.Password);
+
+        //    if (result.Succeeded)
+        //    {
+        //            user.EmailConfirmed = true;
+
+        //            await _userManager.AddToRoleAsync(user, "Customer");
+
+        //            _verificationCodeService.ClearCode(normalizedEmail);
+
+        //            return Ok("Account registered successfully");
+        //    }
+
+        //        return BadRequest(result.Errors.Select(e => e.Description));
+        //}
+        //}
 
 
         // Add this endpoint for code resend

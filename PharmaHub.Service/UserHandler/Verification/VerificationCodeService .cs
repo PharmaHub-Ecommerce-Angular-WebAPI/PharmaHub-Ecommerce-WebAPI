@@ -6,6 +6,7 @@ public class VerificationCodeService : IVerificationCodeService
 {
     private readonly IMemoryCache _memoryCache;
 
+    private readonly Dictionary<string, bool> _verifiedEmails = new();
     public VerificationCodeService(IMemoryCache memoryCache)
     {
         _memoryCache = memoryCache;
@@ -27,37 +28,44 @@ public class VerificationCodeService : IVerificationCodeService
         return code;
     }
 
+
     public string VerifyCode(string email, string inputCode)
     {
+        
         if (_memoryCache.TryGetValue<(string Code, DateTime Expiration, int Attempts, DateTime LastResendTime)>(email.ToLower(), out var storedData))
         {
-            if (storedData.Expiration < DateTime.UtcNow)
+            if (storedData.Expiration < DateTime.UtcNow)  
             {
-                _memoryCache.Remove(email.ToLower());
-                return "Expired";
+                _memoryCache.Remove(email.ToLower()); 
+                return "Expired";  
             }
 
-            if (storedData.Code == inputCode)
+            if (storedData.Code.Trim() == inputCode.Trim())  
             {
-                _memoryCache.Remove(email.ToLower());
-                return "Valid";
+                
+                _verifiedEmails[email] = true;  
+                _memoryCache.Remove(email.ToLower());  
+                return "Valid";  
             }
 
+           
             storedData.Attempts++;
-            if (storedData.Attempts >= _maxAttempts)
+            if (storedData.Attempts >= _maxAttempts)  
             {
-                _memoryCache.Remove(email.ToLower());
+                _memoryCache.Remove(email.ToLower());  
             }
             else
             {
+              
                 _memoryCache.Set(email.ToLower(), storedData, storedData.Expiration - DateTime.UtcNow);
             }
 
             return "Invalid";
         }
 
-        return "Invalid";
+        return "Invalid";  
     }
+
 
 
     public void ClearCode(string email)
@@ -95,5 +103,9 @@ public class VerificationCodeService : IVerificationCodeService
         }
 
         return _maxAttempts;
+    }
+    public bool IsVerified(string email)
+    {
+        return _verifiedEmails.TryGetValue(email, out bool isVerified) && isVerified;
     }
 }

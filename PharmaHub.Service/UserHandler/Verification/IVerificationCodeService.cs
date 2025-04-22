@@ -8,4 +8,6 @@ public interface IVerificationCodeService
     bool HasTooManyAttempts(string email);
     bool LastResendWasTooRecent(string email);
     int GetRemainingAttempts(string email);
+    bool IsVerified(string email);
+
 }
