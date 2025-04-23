@@ -11,9 +11,9 @@ namespace PharmaHub.Service.OpenFDA_Handler
     {
         private readonly HttpClient _client;
 
-        public OpenFDAService()
+        public OpenFDAService(HttpClient client)
         {
-            _client = new HttpClient();
+            _client = client;
         }
 
         public async Task<List<DrugSuggestion>> SearchDrugOpenFDA(string query)

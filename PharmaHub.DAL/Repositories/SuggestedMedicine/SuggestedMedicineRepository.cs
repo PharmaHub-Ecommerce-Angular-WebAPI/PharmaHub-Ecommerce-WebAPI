@@ -9,7 +9,7 @@ namespace PharmaHub.DALRepositories;
 
 public class SuggestedMedicineRepository : GenericRepository<SuggestedMedicine>, ISuggestedMedicineRepository
 {
-    private readonly ApplicationDbContext _context;
+    
     public SuggestedMedicineRepository(ApplicationDbContext context) : base(context) { }
 
     public async Task AddRangeSuggestedMedicineAsync(params SuggestedMedicine[] newMed)
