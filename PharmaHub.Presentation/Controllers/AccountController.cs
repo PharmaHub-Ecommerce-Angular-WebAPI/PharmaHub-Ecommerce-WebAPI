@@ -248,115 +248,115 @@ namespace PharmaHub.Presentation.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
-        [HttpPut("pharmacy/approve/{email}")]
-        public async Task<IActionResult> ApprovePharmacy(string email)
-        {
-            try
-            {
-                // Find the pharmacy user by email
-                var pharmacy = await _userManager.FindByEmailAsync(email);
-                if (pharmacy == null)
-                    return NotFound("Pharmacy not found");
+        //[Authorize(Roles = "Admin")]
+        //[HttpPut("pharmacy/approve/{email}")]
+        //public async Task<IActionResult> ApprovePharmacy(string email)
+        //{
+        //    try
+        //    {
+        //        // Find the pharmacy user by email
+        //        var pharmacy = await _userManager.FindByEmailAsync(email);
+        //        if (pharmacy == null)
+        //            return NotFound("Pharmacy not found");
 
-                // Check if already approved
-                if (pharmacy.AccountStat == AccountStats.Active)
-                    return Ok("Pharmacy is already approved");
+        //        // Check if already approved
+        //        if (pharmacy.AccountStat == AccountStats.Active)
+        //            return Ok("Pharmacy is already approved");
 
-                // Update status to approved
-                pharmacy.AccountStat = AccountStats.Active;
+        //        // Update status to approved
+        //        pharmacy.AccountStat = AccountStats.Active;
 
-                // Update the user
-                var result = await _userManager.UpdateAsync(pharmacy);
-                if (!result.Succeeded)
-                    return BadRequest(result.Errors.Select(e => e.Description));
+        //        // Update the user
+        //        var result = await _userManager.UpdateAsync(pharmacy);
+        //        if (!result.Succeeded)
+        //            return BadRequest(result.Errors.Select(e => e.Description));
 
-                // Assign to Pharmacy role if needed
-                if (!await _userManager.IsInRoleAsync(pharmacy, "Pharmacy"))
-                {
-                    var roleResult = await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
-                    if (!roleResult.Succeeded)
-                        return BadRequest(roleResult.Errors.Select(e => e.Description));
-                }
+        //        // Assign to Pharmacy role if needed
+        //        if (!await _userManager.IsInRoleAsync(pharmacy, "Pharmacy"))
+        //        {
+        //            var roleResult = await _userManager.AddToRoleAsync(pharmacy, "Pharmacy");
+        //            if (!roleResult.Succeeded)
+        //                return BadRequest(roleResult.Errors.Select(e => e.Description));
+        //        }
 
-                return Ok("Pharmacy approved successfully");
-            }
-            catch (Exception ex)
-            {
+        //        return Ok("Pharmacy approved successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                return StatusCode(500, "An error occurred while processing your request");
-            }
-        }
+        //        return StatusCode(500, "An error occurred while processing your request");
+        //    }
+        //}
 
-        [Authorize(Roles = "Admin")]
-        [HttpPut("pharmacy/ban/{email}")]
-        public async Task<IActionResult> BanPharmacy(string email)
-        {
-            try
-            {
-                // Find the pharmacy user by email
-                var pharmacy = await _userManager.FindByEmailAsync(email);
-                if (pharmacy == null)
-                    return NotFound("Pharmacy not found");
+        //[Authorize(Roles = "Admin")]
+        //[HttpPut("pharmacy/ban/{email}")]
+        //public async Task<IActionResult> BanPharmacy(string email)
+        //{
+        //    try
+        //    {
+        //        // Find the pharmacy user by email
+        //        var pharmacy = await _userManager.FindByEmailAsync(email);
+        //        if (pharmacy == null)
+        //            return NotFound("Pharmacy not found");
 
-                // Check if already banned
-                if (pharmacy.AccountStat == AccountStats.Banned)
-                    return Ok("Pharmacy is already banned");
+        //        // Check if already banned
+        //        if (pharmacy.AccountStat == AccountStats.Banned)
+        //            return Ok("Pharmacy is already banned");
 
-                // Update status to banned
-                pharmacy.AccountStat = AccountStats.Banned;
+        //        // Update status to banned
+        //        pharmacy.AccountStat = AccountStats.Banned;
 
-                // Update the user
-                var result = await _userManager.UpdateAsync(pharmacy);
-                if (!result.Succeeded)
-                    return BadRequest(result.Errors.Select(e => e.Description));
+        //        // Update the user
+        //        var result = await _userManager.UpdateAsync(pharmacy);
+        //        if (!result.Succeeded)
+        //            return BadRequest(result.Errors.Select(e => e.Description));
 
-                // Remove from Pharmacy role (optional - depending on your requirements)
-                if (await _userManager.IsInRoleAsync(pharmacy, "Pharmacy"))
-                {
-                    var roleResult = await _userManager.RemoveFromRoleAsync(pharmacy, "Pharmacy");
-                    if (!roleResult.Succeeded)
-                        return BadRequest(roleResult.Errors.Select(e => e.Description));
-                }
+        //        // Remove from Pharmacy role (optional - depending on your requirements)
+        //        if (await _userManager.IsInRoleAsync(pharmacy, "Pharmacy"))
+        //        {
+        //            var roleResult = await _userManager.RemoveFromRoleAsync(pharmacy, "Pharmacy");
+        //            if (!roleResult.Succeeded)
+        //                return BadRequest(roleResult.Errors.Select(e => e.Description));
+        //        }
 
-                return Ok("Pharmacy banned successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request");
-            }
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpGet("users/with-status")]
-        public async Task<IActionResult> GetAllUsersWithStatus()
-        {
-            try
-            {
-                // Get all users (or filter by role if needed)
-                List<Pharmacy>? users = _userManager.User.ToList();
+        //        return Ok("Pharmacy banned successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "An error occurred while processing your request");
+        //    }
+        //}
+        //[Authorize(Roles = "Admin")]
+        //[HttpGet("users/with-status")]
+        //public async Task<IActionResult> GetAllUsersWithStatus()
+        //{
+        //    try
+        //    {
+        //        // Get all users (or filter by role if needed)
+        //        List<Pharmacy>? users = _userManager.User.ToList();
 
-                var result = new List<UserWithStatus>();
+        //        var result = new List<UserWithStatus>();
 
-                foreach (var user in users)
-                {
-                    var roles = await _userManager.GetRolesAsync(Pharmacy);
-                    result.Add(new UserWithStatusDto
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        UserName = user.UserName,
-                        AccountStat = user.AccountStat,
-                        Roles = roles.ToList()
-                    });
-                }
+        //        foreach (var user in users)
+        //        {
+        //            var roles = await _userManager.GetRolesAsync(Pharmacy);
+        //            result.Add(new UserWithStatusDto
+        //            {
+        //                Id = user.Id,
+        //                Email = user.Email,
+        //                UserName = user.UserName,
+        //                AccountStat = user.AccountStat,
+        //                Roles = roles.ToList()
+        //            });
+        //        }
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while fetching users.");
-            }
-        }
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "An error occurred while fetching users.");
+        //    }
+        //}
 
         #endregion
 
