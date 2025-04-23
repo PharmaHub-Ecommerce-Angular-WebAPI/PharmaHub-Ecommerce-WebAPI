@@ -156,6 +156,9 @@ public class Program
 
         #endregion
 
+        #region Strip Configuration
+        builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe")); 
+        #endregion
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,10 +1,17 @@
-﻿using PharmaHub.DTOs.Payment;
+﻿using Microsoft.Extensions.Options;
+using PharmaHub.DTOs.Payment;
 using Stripe;
 
 namespace PharmaHub.Service.Payment;
 
 public class PaymentService
 {
+    private readonly string _secretKey;
+    public PaymentService(IOptions<StripeSettings> stripeSettings)
+    {
+        _secretKey = stripeSettings.Value.SecretKey;
+        StripeConfiguration.ApiKey = _secretKey;
+    }
     public async Task<PaymentResult> ProcessPayment(string paymentToken, int amount = 20)
     {
         //  Configure Stripe
