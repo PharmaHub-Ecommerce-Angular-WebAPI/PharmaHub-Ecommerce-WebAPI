@@ -19,6 +19,7 @@ namespace PharmaHub.Business.Contracts
         public Task<IReadOnlyList<GetProductDto>> ProductsSearch(string name);
         public  Task<List<GetProductDto>?> ProductFuzzySearch(string name);
         public Task<decimal> GetMaxPriceByCategory(ProductCategory? category);
+        public Task<GetProductDto> GetProductById(Guid productId);
         public Task<ProblemDetails?> DeleteProduct(Guid productId);
         public Task<ProblemDetails?> UpdateProduct(Guid productId, UpdateProductDto product);
         public Task<PharmacyProductStats> GetPharmacyAnalisis(string pharmacyId);

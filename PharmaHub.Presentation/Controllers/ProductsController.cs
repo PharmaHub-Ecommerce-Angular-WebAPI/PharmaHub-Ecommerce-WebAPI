@@ -105,6 +105,22 @@ namespace PharmaHub.Presentation.Controllers
             }
             return Ok(maxPrice);
         }
+
+
+        // GET:api/Products/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
+        {
+
+            var product = await _productManager.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound("Product not found.");
+            }
+            return Ok(product);
+        }
+
+
         // -------------------- Pharmacy Owner Routes --------------------
 
         // POST: api/products

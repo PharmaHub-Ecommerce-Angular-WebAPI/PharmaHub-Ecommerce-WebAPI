@@ -211,6 +211,38 @@ namespace PharmaHub.Business.Managers
             return maxPrice;
         }
 
+        public async Task<GetProductDto> GetProductById(Guid productId)
+        {
+            var product = await _unitOfWork._productsRepo.GetIdAsync(productId);
+            if (product == null)
+            {
+                return null;
+            }
+            // Get the package components if the product is a package
+            var packageComponents = new List<string>();
+            if (product.Category == ProductCategory.Package)
+            {
+                packageComponents = product.PackagesComponents
+                    .Select(pc => pc.ComponentName).ToList();
+            }
+            // Map the product to GetProductDto
+            return new GetProductDto
+            (
+                product.Id,
+                product.Name,
+                product.Description,
+                product.ImageUrl,
+                product.Price,
+                product.Category,
+                product.DiscountRate,
+                product.Strength,
+                packageComponents,
+                product.PharmacyId,
+                product.Pharmacy.UserName,
+                product.Pharmacy.LogoURL
+            );
+        }
+
         #endregion
 
 
