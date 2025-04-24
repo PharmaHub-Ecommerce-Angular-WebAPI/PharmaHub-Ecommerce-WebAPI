@@ -245,6 +245,48 @@ namespace PharmaHub.Business.Managers
         }
 
         #endregion
+
+
+        #region ADmin
+
+       public async Task ApproveProduct(Guid productId)
+       {
+            // Get the product by ID
+            var product = await _unitOfWork._productsRepo.GetIdAsync(productId);
+
+            // Check if the product exists
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+
+            await _unitOfWork._productsRepo.UpdatedAsync(new Product
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                ImageUrl = product.ImageUrl,
+                Price = product.Price,
+                Quantity = 5,
+                Strength = product.Strength,
+                Category = product.Category,
+                PharmacyId = product.PharmacyId
+            });
+
+            await _unitOfWork._suggestedMedicinesRepo.AddRangeSuggestedMedicineAsync(
+                new SuggestedMedicine
+                {
+                    Name = product.Name,
+                    Strength = product.Strength ?? default
+                }
+            );
+
+            await _unitOfWork.CompleteAsync();
+       }
+
+
+        #endregion
+
     }
 
 

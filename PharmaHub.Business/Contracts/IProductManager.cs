@@ -22,5 +22,6 @@ namespace PharmaHub.Business.Contracts
         public Task<ProblemDetails?> DeleteProduct(Guid productId);
         public Task<ProblemDetails?> UpdateProduct(Guid productId, UpdateProductDto product);
         public Task<PharmacyProductStats> GetPharmacyAnalisis(string pharmacyId);
+        public  Task ApproveProduct(Guid productId);
     }
 }

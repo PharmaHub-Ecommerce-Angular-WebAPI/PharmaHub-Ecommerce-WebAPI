@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PharmaHub.Business.Contracts;
+using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.DTOs.ProductDTOs;
 using PharmaHub.Presentation.ActionRequest.Product;
@@ -168,6 +169,15 @@ namespace PharmaHub.Presentation.Controllers
             return NoContent();
         }
 
+        // -------------------- Admin Routes --------------------
 
+
+        // PUT: api/products/approve/{id}
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> ApproveProduct(Guid id)
+        {
+            await _productManager.ApproveProduct(id);
+            return Ok();
+        }
     }
 }
