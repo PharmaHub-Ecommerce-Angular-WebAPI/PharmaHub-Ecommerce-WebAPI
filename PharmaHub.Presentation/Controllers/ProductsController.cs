@@ -105,6 +105,22 @@ namespace PharmaHub.Presentation.Controllers
             }
             return Ok(maxPrice);
         }
+
+
+        // GET:api/Products/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
+        {
+
+            var product = await _productManager.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound("Product not found.");
+            }
+            return Ok(product);
+        }
+
+
         // -------------------- Pharmacy Owner Routes --------------------
 
         // POST: api/products
@@ -172,12 +188,25 @@ namespace PharmaHub.Presentation.Controllers
         // -------------------- Admin Routes --------------------
 
 
-        // PUT: api/products/approve/{id}
-        [HttpPut("approve/{id}")]
+        // Get: api/products/approve/{id}
+        [HttpGet("approve/{id}")]
         public async Task<IActionResult> ApproveProduct(Guid id)
         {
             await _productManager.ApproveProduct(id);
             return Ok();
         }
+        // Get: api/products/pending
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetPendingProducts()
+        {
+            var result = await _productManager.GetPendingProducts();
+            if (result == null || !result.Any())
+            {
+                return NotFound("No products found.");
+            }
+            return Ok(result);
+        }
+
+
     }
 }

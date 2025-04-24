@@ -211,6 +211,42 @@ namespace PharmaHub.Business.Managers
             return maxPrice;
         }
 
+        public async Task<GetProductDto> GetProductById(Guid productId)
+        {
+            var product = await _unitOfWork._productsRepo.GetIdAsync(productId);
+            if (product == null)
+            {
+                return null;
+            }
+            
+            // Get the package components if the product is a package
+            var packageComponents = new List<string>();
+            // Check if the product is a package and get its components
+            // If the product is a package, get its components
+            if (product.Category == ProductCategory.Package )
+            {
+                packageComponents = product.PackagesComponents
+                    .Select(pc => pc.ComponentName).ToList();
+            }
+            // Map the product to GetProductDto
+            return new GetProductDto
+            (
+                product.Id,
+                product.Name,
+                product.Description,
+                product.ImageUrl,
+                product.Price,
+                product.Category,
+                product.DiscountRate,
+                product.Strength,
+                packageComponents,
+                product.PharmacyId,
+                "UserName",
+                "LogoURL",
+                product.Quantity
+            );
+        }
+
         #endregion
 
 
@@ -284,7 +320,32 @@ namespace PharmaHub.Business.Managers
             await _unitOfWork.CompleteAsync();
        }
 
+        public async Task<List<GetProductDto>?> GetPendingProducts()
+        {
 
+            var products = await _unitOfWork._productsRepo.GetProductsPendingAsync();
+            // If no products found, return an empty list
+            if (products == null || !products.Any())
+            {
+                return new List<GetProductDto>();
+            }
+            // Map the products to GetProductDto
+            return products.Select(p => new GetProductDto
+            (
+                p.Id,
+                p.Name,
+                p.Description,
+                p.ImageUrl,
+                p.Price,
+                p.Category,
+                p.DiscountRate,
+                p.Strength,
+                new List<string>(),
+                p.PharmacyId,
+                "UserName",
+                "LogoURL"
+            )).ToList();
+        }
         #endregion
 
     }

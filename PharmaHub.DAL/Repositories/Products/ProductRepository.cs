@@ -187,4 +187,15 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
         // Return the counts as a list
         return new PharmacyProductStats { TotalProducts =totalProductsCount, FavoritedProducts = favoritedProductsCount };
     }
+
+
+    public async Task<IReadOnlyList<Product>> GetProductsPendingAsync()
+    {
+        //like make the quantity = 32000 pending Flag
+        return await _dbSet
+            .AsNoTracking()
+            .Where(p => p.Quantity == 32000)
+            .ToListAsync();
+    }
+
 }
