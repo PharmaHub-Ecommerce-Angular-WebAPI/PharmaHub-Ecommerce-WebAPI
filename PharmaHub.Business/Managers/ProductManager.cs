@@ -242,7 +242,8 @@ namespace PharmaHub.Business.Managers
                 packageComponents,
                 product.PharmacyId,
                 "UserName",
-                "LogoURL"
+                "LogoURL",
+                product.Quantity
             );
         }
 
@@ -319,7 +320,32 @@ namespace PharmaHub.Business.Managers
             await _unitOfWork.CompleteAsync();
        }
 
+        public async Task<List<GetProductDto>?> GetPendingProducts()
+        {
 
+            var products = await _unitOfWork._productsRepo.GetProductsPendingAsync();
+            // If no products found, return an empty list
+            if (products == null || !products.Any())
+            {
+                return new List<GetProductDto>();
+            }
+            // Map the products to GetProductDto
+            return products.Select(p => new GetProductDto
+            (
+                p.Id,
+                p.Name,
+                p.Description,
+                p.ImageUrl,
+                p.Price,
+                p.Category,
+                p.DiscountRate,
+                p.Strength,
+                new List<string>(),
+                p.PharmacyId,
+                "UserName",
+                "LogoURL"
+            )).ToList();
+        }
         #endregion
 
     }

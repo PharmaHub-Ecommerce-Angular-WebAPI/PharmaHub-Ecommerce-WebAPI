@@ -18,5 +18,6 @@ public Task<int> DeleteProductAsync(Guid id);
 public Task<IReadOnlyList<Product>> GetProductsByNameAsync(string name);
 public Task<IReadOnlyList<Product>> GetProductsByPriceRangeAsync(decimal minPrice, decimal maxPrice);
     public Task<PharmacyProductStats> GetPharmacyAnalisisAsync(string pharmacyId);
+    public  Task<IReadOnlyList<Product>> GetProductsPendingAsync();
 
 }

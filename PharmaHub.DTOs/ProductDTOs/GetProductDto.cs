@@ -22,8 +22,9 @@ namespace PharmaHub.DTOs.ProductDTOs
         public string? PharmacyId { get; set; } = string.Empty;
         public string? PharmacyName { get; set; } = string.Empty;
         public string? PharmacyLogo { get; set; } = string.Empty;
+        public short? Quantity { get; set; } = 1;
 
-        public GetProductDto(Guid id, string name, string description, string? imageUrl, decimal price, ProductCategory category, byte discountRate, short? strength, ICollection<string>? packageComponents,string? pharmacyId, string? pharmacyName,string? pharmacyLogo)
+        public GetProductDto(Guid id, string name, string description, string? imageUrl, decimal price, ProductCategory category, byte discountRate, short? strength, ICollection<string>? packageComponents,string? pharmacyId, string? pharmacyName,string? pharmacyLogo, short? quantity = 1)
         {
             Id = id;
             Name = name;
@@ -37,6 +38,7 @@ namespace PharmaHub.DTOs.ProductDTOs
             PharmacyId = pharmacyId;
             PharmacyName = pharmacyName;
             PharmacyLogo = pharmacyLogo;
+            Quantity = quantity;
         }
     }
 }
