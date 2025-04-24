@@ -218,9 +218,12 @@ namespace PharmaHub.Business.Managers
             {
                 return null;
             }
+            
             // Get the package components if the product is a package
             var packageComponents = new List<string>();
-            if (product.Category == ProductCategory.Package)
+            // Check if the product is a package and get its components
+            // If the product is a package, get its components
+            if (product.Category == ProductCategory.Package )
             {
                 packageComponents = product.PackagesComponents
                     .Select(pc => pc.ComponentName).ToList();
@@ -238,8 +241,8 @@ namespace PharmaHub.Business.Managers
                 product.Strength,
                 packageComponents,
                 product.PharmacyId,
-                product.Pharmacy.UserName,
-                product.Pharmacy.LogoURL
+                "UserName",
+                "LogoURL"
             );
         }
 
