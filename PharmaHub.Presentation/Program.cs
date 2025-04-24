@@ -22,6 +22,7 @@ using PharmaHub.DTOs.Payment;
 using PharmaHub.Presentation.Controllers;
 using PharmaHub.Service.JWT_Handler;
 using PharmaHub.Service.OpenFDA_Handler;
+using PharmaHub.Service.Payment;
 using PharmaHub.Service.UserHandler;
 using PharmaHub.Service.UserHandler.Verification;
 
@@ -77,6 +78,8 @@ public class Program
         //Register Unit of Verification Code
         builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
 
+        // Register Unit Of Payment Services 
+        builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 
         builder.Services.AddMemoryCache();

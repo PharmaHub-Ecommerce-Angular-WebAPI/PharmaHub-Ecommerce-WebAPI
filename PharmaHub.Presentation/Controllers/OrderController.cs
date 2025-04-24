@@ -12,17 +12,17 @@ namespace PharmaHub.Presentation.Controllers
     {
         #region Field and Constructor
         private readonly IOrderManager _orderManager;
-        private readonly PaymentService _paymentService;
-        public OrderController(IOrderManager orderManager)
+        private  IPaymentService _paymentService;
+        public OrderController(IOrderManager orderManager ,IPaymentService paymentService)
         {
             _orderManager = orderManager;
-
+            _paymentService = paymentService;
         }
         #endregion
 
         #region Create Order
         [HttpPost("create")]
-        public async Task<IActionResult> CreateOrder([FromForm] CreateOrderActionRequest order)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderActionRequest order)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

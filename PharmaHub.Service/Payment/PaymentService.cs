@@ -4,7 +4,7 @@ using Stripe;
 
 namespace PharmaHub.Service.Payment;
 
-public class PaymentService
+public class PaymentService : IPaymentService
 {
     private readonly string _secretKey;
     public PaymentService(IOptions<StripeSettings> stripeSettings)
@@ -12,10 +12,10 @@ public class PaymentService
         _secretKey = stripeSettings.Value.SecretKey;
         StripeConfiguration.ApiKey = _secretKey;
     }
-    public async Task<PaymentResult> ProcessPayment(string paymentToken, int amount = 20)
+    public async Task<PaymentResult> ProcessPayment(string paymentToken, byte amount = 20)
     {
         //  Configure Stripe
-        StripeConfiguration.ApiKey = "sk_test_51R40K2K0i4ouTtOMJUqnSovmijOjGf5hVnxNY6FtCil3Dv5zx6kPwbaR7II6AMeNFlMZhVQAWqdFNR3zn59D7cDP001EwLibdN";
+        StripeConfiguration.ApiKey = _secretKey;
 
         // Create the payment charge options
         var options = new ChargeCreateOptions
