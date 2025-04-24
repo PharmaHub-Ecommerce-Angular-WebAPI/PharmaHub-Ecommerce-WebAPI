@@ -18,29 +18,8 @@ public class UserWithStatus
     [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
     public string UserName { get; set; }
 
-    [Required(ErrorMessage = "Account status is required.")]
-    public AccountStats AccountStat { get; set; }
 
-    [Required(ErrorMessage = "Roles are required.")]
-    [MinLength(1, ErrorMessage = "At least one role must be specified.")]
-    public IEnumerable<string> Roles { get; set; }
-}
-
-public class ValidRolesAttribute : ValidationAttribute
-{
-    private readonly string[] _allowedRoles = { "Admin", "Doctor", "Patient", "Pharmacist" };
-
-    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-    {
-        if (value is IEnumerable<string> roles)
-        {
-            var invalidRoles = roles.Where(role => !_allowedRoles.Contains(role)).ToList();
-            if (invalidRoles.Any())
-            {
-                return new ValidationResult($"Invalid roles: {string.Join(", ", invalidRoles)}. Allowed roles: {string.Join(", ", _allowedRoles)}");
-            }
-        }
-        return ValidationResult.Success;
-    }
+    public string FormalPapersURL { get; set; } = string.Empty;
 
 }
+

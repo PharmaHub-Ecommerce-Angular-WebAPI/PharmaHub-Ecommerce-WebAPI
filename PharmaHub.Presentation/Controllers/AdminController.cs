@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PharmaHub.Domain.Entities.Identity;
 using PharmaHub.Domain.Enums;
 using PharmaHub.Presentation.Model;
@@ -13,10 +14,12 @@ namespace PharmaHub.Presentation.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
-        private readonly UserManager<Pharmacy> _userManager;
-        public AdminController(UserManager<Pharmacy> user)
+        private readonly UserManager<User> _userManager;
+        
+        private ILogger<AdminController> _logger;
+        public AdminController(UserManager<User> userManager)
         {
-            _userManager =user;
+            _userManager = userManager;
         }
 
         // Add your admin endpoints here
@@ -108,37 +111,45 @@ namespace PharmaHub.Presentation.Controllers
                 return StatusCode(500, "An error occurred while processing your request");
             }
         }
+
         [Authorize(Roles = "Admin")]
-        [HttpGet("pharmacis/with-status")]
+        [HttpGet("pharmacies/with-status")]
         public async Task<IActionResult> GetAllUsersWithStatus()
         {
             try
             {
-            
-                List<Pharmacy>? users = _userManager.Users.ToList();
+                var users = await _userManager.Users
+                    .Where(u => u.AccountStat == AccountStats.Pending)
+                    .ToListAsync();
 
                 var result = new List<UserWithStatus>();
 
                 foreach (var user in users)
                 {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    result.Add(new UserWithStatus
+                    var pharmacy = user as Pharmacy;
+                    if (pharmacy != null)
                     {
-                        Id = user.Id,
-                        Email = user.Email,
-                        UserName = user.UserName,
-                        AccountStat = user.AccountStat,
-                        Roles = roles.ToList()
-                    });
+                        var roles = await _userManager.GetRolesAsync(user);
+
+                        result.Add(new UserWithStatus
+                        {
+                            Id = user.Id,
+                            Email = user.Email,
+                            UserName = user.UserName,
+                            FormalPapersURL = pharmacy.FormalPapersURL
+                        });
+                    }
                 }
 
                 return Ok(result);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error fetching users with status");
                 return StatusCode(500, "An error occurred while fetching users.");
             }
         }
+
         #endregion
     }
 }
