@@ -150,6 +150,37 @@ namespace PharmaHub.Presentation.Controllers
             }
         }
 
+        [HttpDelete("{email}")]
+        public async  Task<IActionResult> reject(string email)
+        {
+            try
+            {
+                // Find the user by email
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user is null)
+                {
+                    return NotFound("User not found");
+                }
+
+                // Delete the user
+                var result = await _userManager.DeleteAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
+
+                return Ok("User rejected and deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) here if you have logging configured
+                return StatusCode(500, "An error occurred while processing your request");
+            }
+        }
+
+
         #endregion
     }
 }
