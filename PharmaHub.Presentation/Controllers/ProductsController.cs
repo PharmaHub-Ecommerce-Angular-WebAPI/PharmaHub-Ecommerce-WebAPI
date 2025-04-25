@@ -189,7 +189,7 @@ namespace PharmaHub.Presentation.Controllers
 
 
         // Get: api/products/approve/{id}
-        [HttpGet("approve/{id}")]
+        [HttpPost("approve/{id}")]
         public async Task<IActionResult> ApproveProduct(Guid id)
         {
             await _productManager.ApproveProduct(id);

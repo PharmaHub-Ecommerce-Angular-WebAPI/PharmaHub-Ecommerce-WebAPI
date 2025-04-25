@@ -34,7 +34,7 @@ namespace PharmaHub.Presentation.Controllers
 
         #region Pharmacy Controllers
         [Authorize(Roles = "Admin")]
-        [HttpPut("pharmacy/approve/{email}")]
+        [HttpPost("pharmacy/approve/{email}")]
         public async Task<IActionResult> ApprovePharmacy(string email)
         {
             try

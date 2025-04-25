@@ -297,18 +297,9 @@ namespace PharmaHub.Business.Managers
                 throw new ArgumentNullException(nameof(product));
             }
 
-            await _unitOfWork._productsRepo.UpdatedAsync(new Product
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                ImageUrl = product.ImageUrl,
-                Price = product.Price,
-                Quantity = 5,
-                Strength = product.Strength,
-                Category = product.Category,
-                PharmacyId = product.PharmacyId
-            });
+            product.Quantity = 5;
+            await _unitOfWork._productsRepo.UpdatedAsync(product);
+
 
             await _unitOfWork._suggestedMedicinesRepo.AddRangeSuggestedMedicineAsync(
                 new SuggestedMedicine
