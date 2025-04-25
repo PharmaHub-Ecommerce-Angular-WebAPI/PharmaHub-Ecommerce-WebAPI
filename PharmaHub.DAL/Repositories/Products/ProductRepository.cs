@@ -116,10 +116,12 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     }
 
     // Get product Offers
-    public async Task<IReadOnlyList<Product>> GetAllAsync()
+    public    async Task<IReadOnlyList<Product>> GetAllProductAsync()
     {
         return await _dbSet
             .AsNoTracking()
+            .Include(p=>p.PackagesComponents)
+            .Include(p => p.Pharmacy)
             .ToListAsync();
     }
 

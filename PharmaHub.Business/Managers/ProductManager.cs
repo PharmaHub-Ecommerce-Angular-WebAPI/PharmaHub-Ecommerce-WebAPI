@@ -169,7 +169,7 @@ namespace PharmaHub.Business.Managers
 
             // If no products found, perform fuzzy search
             // Get all products from the database and make them List for fuzzy search 
-            var listProducts = (await _unitOfWork._productsRepo.GetAllAsync()).ToList();
+            var listProducts = (await _unitOfWork._productsRepo.GetAllProductAsync()).ToList();
 
             // Get all product names from the list of products
             var productNames = listProducts.Select(p => p.Name).ToList();
@@ -195,10 +195,11 @@ namespace PharmaHub.Business.Managers
                 p.Category,
                 p.DiscountRate,
                 p.Strength,
-                new List<string>(),
+                p.PackagesComponents.Select(p=>p.ComponentName).ToList()??new List<string>(),
                 p.PharmacyId,
                 p.Pharmacy.UserName,
-                p.Pharmacy.LogoURL
+                p.Pharmacy.LogoURL,
+                p.Quantity
             )).ToList();
 
             return productDtos;
