@@ -10,5 +10,6 @@ public interface IOrderRepository : IGenericRepository<Order>
     Task<IReadOnlyList<Order>> GetOrdersByUserIdAsync(string userId);
     Task<Order?> GetOrderWithDetailsAsync(Guid orderId);
     Task<IReadOnlyList<Order>> GetOrdersByStatusAsync(OrderStatus status);
+    public Task<List<Order>?> GetAllOrderAsync();
 }
 

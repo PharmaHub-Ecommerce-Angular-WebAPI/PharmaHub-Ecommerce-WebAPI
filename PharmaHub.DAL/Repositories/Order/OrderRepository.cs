@@ -40,4 +40,14 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
             .Include(o => o.ProductOrdersList)
             .ToListAsync();
     }
+
+    public async Task<List<Order>?> GetAllOrderAsync()
+    {
+
+        return await _dbSet
+            .Include(o => o.ProductOrdersList)
+            .ThenInclude(po => po.Product)
+            .Include(o => o.Customer)
+            .ToListAsync();
+    }
 }

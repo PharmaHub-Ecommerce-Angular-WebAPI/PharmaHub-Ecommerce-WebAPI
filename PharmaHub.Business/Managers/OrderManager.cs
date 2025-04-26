@@ -70,37 +70,78 @@ public class OrderManager : IOrderManager
     }
 
 
-    public async Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId)
+    //public async Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId)
+    //{
+    //    var order = await _unitOfWork._ordersRepo.GetOrderWithDetailsAsync(orderId);
+
+    //    if (order == null)
+    //        return null;
+
+    //    return MapToOrderDetailsDto(order);
+    //}
+
+    //public async Task<Order?> GetOrderByIdAsync(Guid orderId)
+
+    //    => await _unitOfWork._ordersRepo.GetIdAsync(orderId);
+    
+    //private OrderDetailsDto MapToOrderDetailsDto(Order order)
+    //{
+    //    decimal totalAmount = order.ProductOrdersList?
+    //        .Sum(po => (po.Product?.Price ?? 0) * po.Amount) ?? 0;
+
+    //    return new OrderDetailsDto(
+    //        order.ID,
+    //        order.Customer?.UserName ?? "Unknown",
+    //        order.PaymentMethod,
+    //        order.OrderStatus,
+    //        order.OrderDate,
+    //        totalAmount,
+    //        order.ProductOrdersList?.Select(po => new ProductOrderDTOs(
+    //            po.ProductId,
+    //            po.Amount,
+    //            po.Product?.Name ?? "Unknown"
+    //        )).ToList() ?? new List<ProductOrderDTOs>()
+    //    );
+    //}
+
+
+    public async Task<List<Order>?> GetAllOrderByParmacyidAsync(string pharmacyId)
     {
-        var order = await _unitOfWork._ordersRepo.GetOrderWithDetailsAsync(orderId);
+        var orders = await _unitOfWork._ordersRepo.GetAllOrderAsync();
+        if (orders == null)
+            return new List<Order>() ;
+        var filteredOrders = orders
+            .Where(o => o.ProductOrdersList.Any(po => po.Product?.PharmacyId == pharmacyId))
+            .ToList();
+        return filteredOrders;
 
-        if (order == null)
-            return null;
-
-        return MapToOrderDetailsDto(order);
     }
 
-    public async Task<Order?> GetOrderByIdAsync(Guid orderId)
-
-        => await _unitOfWork._ordersRepo.GetIdAsync(orderId);
-    
-    private OrderDetailsDto MapToOrderDetailsDto(Order order)
+    public async Task SetOrderActive(Guid id)
     {
-        decimal totalAmount = order.ProductOrdersList?
-            .Sum(po => (po.Product?.Price ?? 0) * po.Amount) ?? 0;
+        var order = await _unitOfWork._ordersRepo.GetIdAsync(id);
+        if (order != null)
+        {
+            order.OrderStatus = OrderStatus.Delivered;
+            await _unitOfWork._ordersRepo.UpdatedAsync(order);
+        }
+    }
 
-        return new OrderDetailsDto(
-            order.ID,
-            order.Customer?.UserName ?? "Unknown",
-            order.PaymentMethod,
-            order.OrderStatus,
-            order.OrderDate,
-            totalAmount,
-            order.ProductOrdersList?.Select(po => new ProductOrderDTOs(
-                po.ProductId,
-                po.Amount,
-                po.Product?.Name ?? "Unknown"
-            )).ToList() ?? new List<ProductOrderDTOs>()
-        );
+
+
+    public async Task DeleteOrder(Guid id)
+    {
+        await _unitOfWork._pr
+        await _unitOfWork._ordersRepo.DeleteAsync(id);
+    }
+
+    public Task<Order?> GetOrderByIdAsync(Guid orderId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<OrderDetailsDto?> GetOrderDetailsAsync(Guid orderId)
+    {
+        throw new NotImplementedException();
     }
 }
