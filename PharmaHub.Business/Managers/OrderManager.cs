@@ -131,7 +131,7 @@ public class OrderManager : IOrderManager
 
     public async Task DeleteOrder(Guid id)
     {
-        await _unitOfWork._pr
+       
         await _unitOfWork._ordersRepo.DeleteAsync(id);
     }
 
